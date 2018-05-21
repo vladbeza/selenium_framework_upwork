@@ -2,6 +2,7 @@ from selenium.webdriver.common.by import By
 from Pages.BasePage import BasePage
 from Toolboxes.MainToolbox import MainToolbox
 
+
 class DeveloperTypesPagesLocators(object):
 
     hero_section = (By.XPATH, '//section[@data-qa-section="hero"]')
@@ -54,7 +55,7 @@ class DeveloperTypesBasePage(BasePage):
         return len(self.get_elements(DeveloperTypesPagesLocators.profile_element))
 
     def click_in_demand_pro(self, name):
-       self.get_element(DeveloperTypesPagesLocators.get_pros_section_item_by_text(name)).click()
+        self.get_element(DeveloperTypesPagesLocators.get_pros_section_item_by_text(name)).click()
 
     def sign_up_in_main_form(self, first_name, last_name, work_email):
         first_name_input = self.scroll_to_element(DeveloperTypesPagesLocators.sign_up_first_name_input)
