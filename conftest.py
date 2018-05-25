@@ -37,7 +37,7 @@ def pytest_configure(config):
                 params=Configuration.BROWSERS)
 def driver(request):
     try:
-        driver = BROWSERS[request.param.upper()]()
+        driver = BROWSERS[request.param.upper()](executable_path="/Users/vladislav.bezugliy/Documents/selenium_test_repo/geckodriver")
         request.cls.driver = driver
         yield
     except (WebDriverException, Exception) as e:

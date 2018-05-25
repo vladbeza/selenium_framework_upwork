@@ -33,9 +33,6 @@ class MainToolboxLocators(object):
 
 class MainToolbox(BasePage):
 
-    def __init__(self, driver):
-        self.driver = driver
-
     def choose_freelancers_search_value(self):
         if not self.is_exist(MainToolboxLocators.search_field_dropdown):
             self.get_element(MainToolboxLocators.search_field_expand_arrow).click()
