@@ -1,8 +1,13 @@
 import pytest
 import logging
+import os
+from datetime import datetime
+
 from selenium import webdriver
-from TestData import Configuration
 from selenium.common.exceptions import WebDriverException
+
+from TestData import Configuration
+from TestData.Configuration import IMPLICIT_WAIT_TIMEOUT
 
 BROWSERS = {
     'FIREFOX': webdriver.Firefox,
@@ -34,13 +39,38 @@ def pytest_configure(config):
 
 
 @pytest.fixture(scope="class",
-                params=Configuration.BROWSERS)
+                params=Configuration.BROWSERS,
+                autouse=True)
 def driver(request):
     try:
-        driver = BROWSERS[request.param.upper()](executable_path="/Users/vladislav.bezugliy/Documents/selenium_test_repo/geckodriver")
+        driver = BROWSERS[request.param.upper()]()
+        driver.implicitly_wait(IMPLICIT_WAIT_TIMEOUT)
+        driver.maximize_window()
         request.cls.driver = driver
         yield
     except (WebDriverException, Exception) as e:
         logging.warning("Unsupported browser type {}".format(e))
     else:
         driver.quit()
+
+
+@pytest.fixture(autouse=True)
+def screenshot_on_failure(request):
+    yield
+    test_name = request.node.name
+    if request.node.rep_call.failed:
+        current_date = str(datetime.now()).split(".")[0]
+        for symbol in [" ", "[", "]", ".", ":"]:
+            current_date = current_date.replace(symbol, "_")
+            test_name = test_name.replace(symbol, "_")
+        screen_path = os.path.join(os.getcwd(), "Screenshots", "{}{}.png".format(test_name, current_date))
+        print(screen_path)
+        print(request.cls.driver.save_screenshot(screen_path))
+
+
+@pytest.hookimpl(hookwrapper=True, tryfirst=True)
+def pytest_runtest_makereport(item, call):
+    outcome = yield
+    rep = outcome.get_result()
+    setattr(item, "rep_" + rep.when, rep)
+    return rep

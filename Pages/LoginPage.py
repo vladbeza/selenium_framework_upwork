@@ -21,22 +21,16 @@ class LoginPage(BasePage):
     URL = "ab/account-security/login?redir=/"
 
     def login(self, email, password):
-        login_input = self.get_element(LoginPageLocators.login_name_input)
-        login_input.clear()
-        login_input.send_keys(email)
-        self.get_element(LoginPageLocators.continue_button).click()
+        self.type_text(LoginPageLocators.login_name_input, email)
+        self.click(LoginPageLocators.continue_button)
 
-        pass_input = self.get_element(LoginPageLocators.login_password_input)
-        pass_input.clear()
-        pass_input.send_keys(password)
-
-        self.get_element(LoginPageLocators.login_button).click()
+        self.type_text(LoginPageLocators.login_password_input, password)
+        self.click(LoginPageLocators.login_button)
         return self
 
     def get_login_name_value(self):
-        login_input = self.get_element(LoginPageLocators.login_name_input)
-        return login_input.value
+        return self.get_element(LoginPageLocators.login_name_input).value
 
     def go_to_main_page(self):
-        self.get_element(LoginPageLocators.upwork_header_label).click()
+        self.click(LoginPageLocators.upwork_header_label)
         return self

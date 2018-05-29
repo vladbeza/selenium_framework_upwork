@@ -48,20 +48,19 @@ class StepModalWindow(BasePage):
     URL = ""
 
     def press_next_button_in_first_window(self):
-        self.get_element(StepModalWindowLocators.next_button_main).click()
+        self.click(StepModalWindowLocators.next_button_main)
         return self
 
     def press_next_button(self):
-        self.get_element(StepModalWindowLocators.next_button).click()
+        self.click(StepModalWindowLocators.next_button)
         return self
 
     def select_checkbox_item(self, text):
-        self.get_element(StepModalWindowLocators.checkbox_by_text(text)).click()
+        self.click(StepModalWindowLocators.checkbox_by_text(text))
         return self
 
     def is_category_radio_box_checked(self, checkbox_text):
         return self.is_radio_checked(StepModalWindowLocators.job_category_checkbox_by_text(checkbox_text))
-
 
 
 class MainPage(BasePage):
@@ -79,15 +78,14 @@ class MainPage(BasePage):
         self.get_element(item_locator).find_element(By.XPATH, '/span[@class="__back"]')
 
     def press_category_item(self, item):
-        self.scroll_to_element(item).click()
+        element = self.scroll_to_element(item)
+        self.click(element)
         return self
 
     def enter_text_to_get_started_entry(self, text):
-        input = self.get_element(MainPageLocators.work_type_input)
-        input.clear()
-        input.send_keys(text)
+        self.type_text(MainPageLocators.work_type_input, text)
         return self
 
     def press_get_started_button(self):
-        self.get_element(MainPageLocators.get_started_button).click()
+        self.click(MainPageLocators.get_started_button)
         return self
