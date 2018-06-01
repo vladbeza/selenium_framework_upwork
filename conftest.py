@@ -1,6 +1,7 @@
 import pytest
 import logging
 import os
+import sys
 from datetime import datetime
 
 from selenium import webdriver
@@ -44,8 +45,6 @@ def pytest_configure(config):
 def driver(request):
     try:
         driver = BROWSERS[request.param.upper()]()
-        driver.implicitly_wait(IMPLICIT_WAIT_TIMEOUT)
-        driver.maximize_window()
         request.cls.driver = driver
         yield
     except (WebDriverException, Exception) as e:
@@ -64,8 +63,7 @@ def screenshot_on_failure(request):
             current_date = current_date.replace(symbol, "_")
             test_name = test_name.replace(symbol, "_")
         screen_path = os.path.join(os.getcwd(), "Screenshots", "{}{}.png".format(test_name, current_date))
-        print(screen_path)
-        print(request.cls.driver.save_screenshot(screen_path))
+        request.cls.driver.save_screenshot(screen_path)
 
 
 @pytest.hookimpl(hookwrapper=True, tryfirst=True)

@@ -1,4 +1,6 @@
 __pycache__
 geckodriver.log
 .pytest_cache
-.pyc
+*.pyc
+geckodriver
+geckodriver.exe

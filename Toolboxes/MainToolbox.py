@@ -3,32 +3,33 @@ from selenium.webdriver.common.keys import Keys
 
 from Pages.BasePage import BasePage
 
+
 class MainToolboxLocators(object):
 
     search_input = (By.ID, "q")
     search_field_expand_arrow = (By.CLASS_NAME, "glyphicon air-icon-arrow-expand")
-    logo = (By.XPATH, '//a[@data-qa="logo"]')
+    logo = (By.CSS_SELECTOR, 'a[data-qa=logo]')
 
-    search_freelancers_search_option = (By.XPATH, '//a[@data-qa="freelancer_value"]')
-    search_jobs_search_option = (By.XPATH, '//a[@data-qa="client_value"]')
-    search_field_dropdown = (By.XPATH, '//a[@data-qa="search_field_dropdown"]')
+    search_freelancers_search_option = (By.CSS_SELECTOR, 'a[data-qa=freelancer_value]')
+    search_jobs_search_option = (By.CSS_SELECTOR, 'a[data-qa=client_value]')
+    search_field_dropdown = (By.CSS_SELECTOR, 'a[data-qa=search_field_dropdown]')
 
-    login_button = (By.XPATH, '//a[@href="/ab/account-security/login"]')
-    how_it_works = (By.XPATH, '//a[@href="/i/how-it-works/client/"]')
-    sign_up = (By.XPATH, '//a[@data-qa="signup"]')
-    post_job_button = (By.XPATH, '//a[@data-qa="cta_post_job"]')
+    login_button = (By.CSS_SELECTOR, 'a[data-qa=login]')
+    how_it_works = (By.CSS_SELECTOR, 'a[href="/i/how-it-works/client/"]')
+    sign_up = (By.CSS_SELECTOR, 'a[data-qa=signup]')
+    post_job_button = (By.CSS_SELECTOR, 'a[data-qa=cta_post_job]')
 
-    web_dev_link = (By.XPATH, '//a[@href="/cat/developers/"]')
-    mobile_dev_link = (By.XPATH, '//a[@href="/cat/mobile-developers/"]')
-    design_link = (By.XPATH, '//a[@href="/cat/designers/"]')
-    writing_link = (By.XPATH, '//a[@href="/cat/writing/"]')
-    admin_support_link = (By.XPATH, '//a[@href="/cat/administrative-support/"]')
-    customer_support_link = (By.XPATH, '//a[@href="/cat/customer-service/"]')
-    marketing_support_link = (By.XPATH, '//a[@href="/cat/sales-marketing/"]')
-    accounting_link = (By.XPATH, '//a[@href="/cat/accounting-consulting/"]')
-    all_categories_link = (By.XPATH, '//a[@href="/i/freelancer-categories-all/"]')
+    web_dev_link = (By.CSS_SELECTOR, 'div.row:nth-child(2) a[href="/cat/developers/"]')
+    mobile_dev_link = (By.CSS_SELECTOR, 'a[href="/cat/mobile-developers/"]')
+    design_link = (By.CSS_SELECTOR, 'a[href="/cat/designers/"]')
+    writing_link = (By.CSS_SELECTOR, 'a[href="/cat/writing/"]')
+    admin_support_link = (By.CSS_SELECTOR, 'a[href="/cat/administrative-support/"]')
+    customer_support_link = (By.CSS_SELECTOR, 'a[href="/cat/customer-service/"]')
+    marketing_support_link = (By.CSS_SELECTOR, 'a[href="/cat/sales-marketing/"]')
+    accounting_link = (By.CSS_SELECTOR, 'a[href="/cat/accounting-consulting/"]')
+    all_categories_link = (By.CSS_SELECTOR, 'a[href="/i/freelancer-categories-all/"]')
 
-    primary_nav_bar = (By.XPATH, '//a[@data-qa-section="primary-navbar"]')
+    primary_nav_bar = (By.CSS_SELECTOR, 'a[data-qa-section=primary-navbar]')
 
 
 class MainToolbox(BasePage):
@@ -52,3 +53,9 @@ class MainToolbox(BasePage):
         if should_submit:
             search.send_keys(Keys.RETURN)
         return self
+
+    def press_login_button(self):
+        self.click(MainToolboxLocators.login_button)
+
+    def press_category_item(self, locator):
+        self.click(locator)

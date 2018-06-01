@@ -18,7 +18,7 @@ class LoginPageLocators(object):
 
 class LoginPage(BasePage):
 
-    URL = "ab/account-security/login?redir=/"
+    URL = "ab/account-security/login"
 
     def login(self, email, password):
         self.type_text(LoginPageLocators.login_name_input, email)

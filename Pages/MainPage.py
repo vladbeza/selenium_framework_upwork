@@ -72,7 +72,7 @@ class MainPage(BasePage):
         self.toolbox = MainToolbox(driver)
 
     def get_elements_in_matches_drop_down(self):
-        return self.get_element(MainPageLocators.matches_dropdown_menu).find_elements(By.XPATH, '/li[contains(@id, "typeahead")]')
+        return self.get_element(MainPageLocators.matches_dropdown_menu).find_elements(By.XPATH, './li[contains(@id, "typeahead")]/a')
 
     def get_back_span_by_category_item(self, item_locator):
         self.get_element(item_locator).find_element(By.XPATH, '/span[@class="__back"]')

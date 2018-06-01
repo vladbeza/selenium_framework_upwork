@@ -68,3 +68,44 @@ class DeveloperTypesBasePage(BasePage):
         self.type_text(DeveloperTypesPagesLocators.sign_up_last_name_input, work_email)
 
         self.click(DeveloperTypesPagesLocators.sigh_up_button)
+
+
+class WebDeveloperPage(DeveloperTypesBasePage):
+
+    URL = "cat/developers/"
+
+
+class MobileDeveloperPage(DeveloperTypesBasePage):
+
+    URL = "cat/mobile-developers/"
+
+
+class DesignerPage(DeveloperTypesBasePage):
+
+    URL = "cat/designers/"
+
+
+class WritingPage(DeveloperTypesBasePage):
+
+    URL = "cat/writing/"
+
+
+class AdminSupportPage(DeveloperTypesBasePage):
+
+    URL = "cat/administrative-support/"
+
+
+class CustomerServicePage(DeveloperTypesBasePage):
+
+    URL = "cat/customer-service/"
+
+
+class MarketingPage(DeveloperTypesBasePage):
+
+    URL = "cat/sales-marketing/"
+
+
+class AccountingPage(DeveloperTypesBasePage):
+
+    URL = "cat/accounting-consulting/"
+

@@ -1,6 +1,6 @@
 from TestData import Configuration
 from selenium.common.exceptions import NoSuchElementException
-from selenium.webdriver.common.action_chains import ActionChains
+from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.remote.webelement import WebElement
@@ -31,7 +31,7 @@ class BasePage(object):
     def is_exist(self, locator):
         self.driver.implicitly_wait(1)
         try:
-            element = self.driver.find_element(*locator)
+            self.driver.find_element(*locator)
             return True
         except NoSuchElementException:
             return False
@@ -47,8 +47,6 @@ class BasePage(object):
     def scroll_to_element(self, locator):
         element = self.driver.find_element(*locator)
         self.driver.execute_script("arguments[0].scrollIntoView();", element)
-        # actions = ActionChains(self.driver)
-        # actions.move_to_element(element).perform()
         return element
 
     def click(self, locator_or_element):
@@ -65,14 +63,23 @@ class BasePage(object):
             element.clear()
         element.send_keys(text)
 
+    def _waiting_wrapper(self, expectation, locator_or_element, timeout):
+        self.driver.implicitly_wait(0)
+        try:
+            return WebDriverWait(self.driver, timeout).until(expectation(locator_or_element))
+        except TimeoutException:
+            return False
+        finally:
+            self.driver.implicitly_wait(Configuration.IMPLICIT_WAIT_TIMEOUT)
+
     def wait_for_exist(self, locator, timeout=Configuration.WAITER_TIMEOUT):
-        WebDriverWait(self.driver, timeout).until(EC.presence_of_element_located(locator))
+        return self._waiting_wrapper(EC.presence_of_element_located, locator, timeout)
 
     def wait_for_not_exist(self, element, timeout=Configuration.WAITER_TIMEOUT):
-        WebDriverWait(self.driver, timeout).until(EC.staleness_of(element))
+        return self._waiting_wrapper(EC.staleness_of, element, timeout)
 
     def wait_for_visible(self, locator, timeout=Configuration.WAITER_TIMEOUT):
-        WebDriverWait(self.driver, timeout).until(EC.visibility_of_element_located(locator))
+        return self._waiting_wrapper(EC.visibility_of_element_located, locator, timeout)
 
     def wait_for_not_visible(self, locator, timeout=Configuration.WAITER_TIMEOUT):
-        WebDriverWait(self.driver, timeout).until(EC.invisibility_of_element_located(locator))
+        return self._waiting_wrapper(EC.invisibility_of_element_located, locator, timeout)
