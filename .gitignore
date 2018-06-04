@@ -4,3 +4,5 @@ geckodriver.log
 *.pyc
 geckodriver
 geckodriver.exe
+chromedriver.exe
+Screenshots/*

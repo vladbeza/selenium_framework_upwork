@@ -7,7 +7,7 @@ from Pages.BasePage import BasePage
 class MainToolboxLocators(object):
 
     search_input = (By.ID, "q")
-    search_field_expand_arrow = (By.CLASS_NAME, "glyphicon air-icon-arrow-expand")
+    search_field_expand_arrow = (By.CSS_SELECTOR, "div[class *= input-group-addon]")
     logo = (By.CSS_SELECTOR, 'a[data-qa=logo]')
 
     search_freelancers_search_option = (By.CSS_SELECTOR, 'a[data-qa=freelancer_value]')
@@ -19,7 +19,7 @@ class MainToolboxLocators(object):
     sign_up = (By.CSS_SELECTOR, 'a[data-qa=signup]')
     post_job_button = (By.CSS_SELECTOR, 'a[data-qa=cta_post_job]')
 
-    web_dev_link = (By.CSS_SELECTOR, 'div.row:nth-child(2) a[href="/cat/developers/"]')
+    web_dev_link = (By.CSS_SELECTOR, 'a[href="/cat/developers/"]')
     mobile_dev_link = (By.CSS_SELECTOR, 'a[href="/cat/mobile-developers/"]')
     design_link = (By.CSS_SELECTOR, 'a[href="/cat/designers/"]')
     writing_link = (By.CSS_SELECTOR, 'a[href="/cat/writing/"]')
@@ -46,10 +46,14 @@ class MainToolbox(BasePage):
         self.get_element(MainToolboxLocators.search_jobs_search_option).click()
         return self
 
+    def get_search_current_placeholder(self):
+        return self.get_element(MainToolboxLocators.search_input).get_attribute("placeholder")
+
+    def get_search_current_text(self):
+        return self.get_element(MainToolboxLocators.search_input).text
+
     def create_search(self, text_for_search, should_submit=True):
-        search = self.get_element(MainToolboxLocators.search_input)
-        search.clear()
-        search.send_keys(text_for_search)
+        search = self.type_text(MainToolboxLocators.search_input, text_for_search)
         if should_submit:
             search.send_keys(Keys.RETURN)
         return self
@@ -57,5 +61,9 @@ class MainToolbox(BasePage):
     def press_login_button(self):
         self.click(MainToolboxLocators.login_button)
 
+    def press_signup_button(self):
+        self.click(MainToolboxLocators.sign_up)
+
     def press_category_item(self, locator):
-        self.click(locator)
+        element = self.driver.find_elements(*locator)[1]
+        self.click(element)

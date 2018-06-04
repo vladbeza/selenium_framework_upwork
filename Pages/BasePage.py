@@ -1,4 +1,4 @@
-from TestData import Configuration
+from TestData.Configuration import Config
 from selenium.common.exceptions import NoSuchElementException
 from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.support.ui import WebDriverWait
@@ -15,7 +15,7 @@ class BasePage(object):
     def get_url(self):
         assert self.URL is not None, "URL should be assigned for Page object"
         if not self.URL.startswith('http'):
-            return Configuration.BASE_URL + self.URL
+            return Config.BASE_URL + self.URL
         else:
             return self.URL
 
@@ -36,7 +36,7 @@ class BasePage(object):
         except NoSuchElementException:
             return False
         finally:
-            self.driver.implicitly_wait(Configuration.IMPLICIT_WAIT_TIMEOUT)
+            self.driver.implicitly_wait(Config.IMPLICIT_WAIT_TIMEOUT)
 
     def is_radio_checked(self, locator):
         return self.get_element(locator).get_attribute("checked") == "true"
@@ -62,6 +62,7 @@ class BasePage(object):
         if should_clear:
             element.clear()
         element.send_keys(text)
+        return element
 
     def _waiting_wrapper(self, expectation, locator_or_element, timeout):
         self.driver.implicitly_wait(0)
@@ -70,16 +71,19 @@ class BasePage(object):
         except TimeoutException:
             return False
         finally:
-            self.driver.implicitly_wait(Configuration.IMPLICIT_WAIT_TIMEOUT)
+            self.driver.implicitly_wait(Config.IMPLICIT_WAIT_TIMEOUT)
 
-    def wait_for_exist(self, locator, timeout=Configuration.WAITER_TIMEOUT):
+    def wait_for_page_loaded(self):
+        WebDriverWait(self.driver, timeout=Config.WAITER_TIMEOUT).until(lambda driver: self.URL in driver.current_url)
+
+    def wait_for_exist(self, locator, timeout=Config.WAITER_TIMEOUT):
         return self._waiting_wrapper(EC.presence_of_element_located, locator, timeout)
 
-    def wait_for_not_exist(self, element, timeout=Configuration.WAITER_TIMEOUT):
+    def wait_for_not_exist(self, element, timeout=Config.WAITER_TIMEOUT):
         return self._waiting_wrapper(EC.staleness_of, element, timeout)
 
-    def wait_for_visible(self, locator, timeout=Configuration.WAITER_TIMEOUT):
+    def wait_for_visible(self, locator, timeout=Config.WAITER_TIMEOUT):
         return self._waiting_wrapper(EC.visibility_of_element_located, locator, timeout)
 
-    def wait_for_not_visible(self, locator, timeout=Configuration.WAITER_TIMEOUT):
+    def wait_for_not_visible(self, locator, timeout=Config.WAITER_TIMEOUT):
         return self._waiting_wrapper(EC.invisibility_of_element_located, locator, timeout)

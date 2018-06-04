@@ -11,7 +11,7 @@ class UpdatePageLocators(object):
 
 class UpdatePage(BasePage):
 
-    URL = ""
+    URL = "/"
 
     def click_status_button(self):
         self.get_element(UpdatePageLocators.check_status_button).click()

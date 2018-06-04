@@ -72,40 +72,40 @@ class DeveloperTypesBasePage(BasePage):
 
 class WebDeveloperPage(DeveloperTypesBasePage):
 
-    URL = "cat/developers/"
+    URL = "/cat/developers/"
 
 
 class MobileDeveloperPage(DeveloperTypesBasePage):
 
-    URL = "cat/mobile-developers/"
+    URL = "/cat/mobile-developers/"
 
 
 class DesignerPage(DeveloperTypesBasePage):
 
-    URL = "cat/designers/"
+    URL = "/cat/designers/"
 
 
 class WritingPage(DeveloperTypesBasePage):
 
-    URL = "cat/writing/"
+    URL = "/cat/writing/"
 
 
 class AdminSupportPage(DeveloperTypesBasePage):
 
-    URL = "cat/administrative-support/"
+    URL = "/cat/administrative-support/"
 
 
 class CustomerServicePage(DeveloperTypesBasePage):
 
-    URL = "cat/customer-service/"
+    URL = "/cat/customer-service/"
 
 
 class MarketingPage(DeveloperTypesBasePage):
 
-    URL = "cat/sales-marketing/"
+    URL = "/cat/sales-marketing/"
 
 
 class AccountingPage(DeveloperTypesBasePage):
 
-    URL = "cat/accounting-consulting/"
+    URL = "/cat/accounting-consulting/"
 

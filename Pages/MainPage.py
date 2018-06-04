@@ -45,7 +45,7 @@ class StepModalWindowLocators(object):
 
 class StepModalWindow(BasePage):
 
-    URL = ""
+    URL = "/"
 
     def press_next_button_in_first_window(self):
         self.click(StepModalWindowLocators.next_button_main)
@@ -65,7 +65,7 @@ class StepModalWindow(BasePage):
 
 class MainPage(BasePage):
 
-    URL = ""
+    URL = "/"
 
     def __init__(self, driver):
         super(MainPage, self).__init__(driver)
