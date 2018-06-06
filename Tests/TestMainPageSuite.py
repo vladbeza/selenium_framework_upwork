@@ -12,6 +12,8 @@ from Pages.DeveloperTypesPages import WebDeveloperPage, MobileDeveloperPage, Des
     AdminSupportPage, CustomerServicePage, MarketingPage, AccountingPage
 from Pages.LoginPage import LoginPage
 from Pages.AllFreelancersCategoriesPage import AllFreelancersCategoriesPage
+from Utils import wait_for_page_load
+
 
 class TestMainPage(BaseTestSuite):
 
@@ -38,7 +40,8 @@ class TestMainPage(BaseTestSuite):
         main_page = self.get_main_page()
         button = main_page.scroll_to_element(MainPageLocators.all_categories_button)
         main_page.scroll_page(-100)
-        button.click()
+        with wait_for_page_load(self.driver):
+            button.click()
         assert self.driver.current_url == AllFreelancersCategoriesPage(self.driver).get_url()
 
     def test_modal_steps_window_appearance(self):
@@ -75,6 +78,8 @@ class TestMainPage(BaseTestSuite):
     def test_open_signup_page_from_toolbox(self):
         main_page = self.get_main_page()
         main_page.toolbox.press_signup_button()
+        with wait_for_page_load(self.driver):
+            main_page.toolbox.press_signup_button()
         assert self.driver.current_url == SignUpPage(self.driver).get_url()
 
     @pytest.mark.parametrize("locator, expected_page",
@@ -88,7 +93,8 @@ class TestMainPage(BaseTestSuite):
                               (MainToolboxLocators.accounting_link, AccountingPage)])
     def test_open_category(self, locator, expected_page):
         main_page = self.get_main_page()
-        main_page.toolbox.press_category_item(locator)
+        with wait_for_page_load(self.driver):
+            main_page.toolbox.press_category_item(locator)
         assert self.driver.current_url == expected_page(self.driver).get_url()
 
     def test_toolbox_search_status(self):
@@ -101,9 +107,9 @@ class TestMainPage(BaseTestSuite):
 
     def test_jobs_search(self):
         main_page = self.get_main_page()
-        main_page.toolbox.choose_jobs_search_value().create_search("Selenium")
         search_page = SearchPage(self.driver)
-        search_page.wait_for_page_loaded()
+        with wait_for_page_load(self.driver):
+            main_page.toolbox.choose_jobs_search_value().create_search("Selenium")
         assert self.driver.current_url == search_page.get_url() + "?q=Selenium"
         assert search_page.get_count_of_found_items_on_page() == 10
 

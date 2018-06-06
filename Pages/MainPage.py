@@ -23,7 +23,7 @@ class MainPageLocators(object):
 
 class StepModalWindowLocators(object):
 
-    main_window = (By.XPATH, '//div[contains(@class,"step-content")]')
+    main_window = (By.XPATH, '//div[@class="modal-dialog"]//div[@class="steps"]')
     close_button = (By.XPATH, '//div[@class="step-header"]/a[@class="icon-close"]')
     next_button_main = (By.XPATH, '//div[contains(@class,"step-content")]//button[contains(@class,"btn")]')
     back_button = (By.XPATH, '//div[contains(@class,"step-footer")]/div[@class="to-left"]/a')

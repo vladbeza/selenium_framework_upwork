@@ -9,4 +9,5 @@ class BaseTestSuite(object):
 
     def setup(self):
         self.driver.implicitly_wait(Config.IMPLICIT_WAIT_TIMEOUT)
-        self.driver.maximize_window()
+        if self.driver.name.upper() != "CHROME":
+            self.driver.maximize_window()

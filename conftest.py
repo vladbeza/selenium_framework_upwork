@@ -1,7 +1,6 @@
 import pytest
 import logging
 import os
-import sys
 from datetime import datetime
 
 from selenium import webdriver
@@ -36,6 +35,18 @@ def pytest_addoption(parser):
                      help='port that the selenium server is listening on, '
                           'which will default to the cloud provider default '
                           'or localhost.')
+    parser.addoption('--firefox_profile_path',
+                     action="store",
+                     help='path to Firefox browser specific profile')
+    parser.addoption('--geckodriver_path',
+                     action="store",
+                     help='path to Firefox driver executable')
+    parser.addoption('--chrome_profile_path',
+                     action="store",
+                     help='path to Chrome browser specific profile')
+    parser.addoption('--chromedriver_path',
+                     action="store",
+                     help='path to Chrome driver executable')
 
 
 def pytest_configure(config):
@@ -60,23 +71,28 @@ def pytest_generate_tests(metafunc):
         metafunc.parametrize("driver", Config.BROWSERS, indirect=True, scope="class")
 
 
-def get_capabilities(browser):
-    capabilities = {}
+def get_driver_for_browser(browser):
     if browser == "CHROME":
-        capabilities["acceptInsecureCerts"] = True
-    return capabilities
+        options = webdriver.ChromeOptions()
+        options.add_argument("start-fullscreen")
+        options.add_argument("disable-popup-blocking")
+        options.add_argument("disable-infobars")
+        options.add_argument("user-data-dir=/Users/vladislav.bezugliy/Library/Application Support/Google/Chrome/")
+        return BROWSERS["CHROME"](chrome_options=options)
+    else:
+        BROWSERS[browser]()
+
 
 @pytest.fixture(scope="class")
 def driver(request):
     try:
-        c = "--allow-running-insecure-content"
-        capabilities = get_capabilities(request.param.upper())
-        driver = BROWSERS[request.param.upper()](desired_capabilities=capabilities)
-        print(driver.capabilities)
+        browser_name = request.param.upper()
+        driver = get_driver_for_browser(browser_name)
         request.cls.driver = driver
         yield
     except (WebDriverException, Exception) as e:
-        logging.warning("Unsupported browser type {}".format(e))
+        logging.fatal("Unsupported browser type {}".format(e))
+        raise e
     else:
         driver.quit()
 
@@ -90,7 +106,10 @@ def screenshot_on_failure(request):
         for symbol in [" ", "[", "]", ".", ":"]:
             current_date = current_date.replace(symbol, "_")
             test_name = test_name.replace(symbol, "_")
-        screen_path = os.path.join(os.getcwd(), "Screenshots", "{}{}.png".format(test_name, current_date))
+        screens_folder = os.path.join(os.getcwd(), "Screenshots")
+        if not os.path.exists(screens_folder):
+            os.makedirs(screens_folder)
+        screen_path = os.path.join(screens_folder, "{}{}.png".format(test_name, current_date))
         request.cls.driver.save_screenshot(screen_path)
 
 
@@ -100,3 +119,4 @@ def pytest_runtest_makereport(item, call):
     rep = outcome.get_result()
     setattr(item, "rep_" + rep.when, rep)
     return rep
+

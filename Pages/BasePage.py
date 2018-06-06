@@ -1,5 +1,5 @@
 from TestData.Configuration import Config
-from selenium.common.exceptions import NoSuchElementException
+from selenium.common.exceptions import NoSuchElementException, StaleElementReferenceException
 from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
@@ -73,9 +73,6 @@ class BasePage(object):
         finally:
             self.driver.implicitly_wait(Config.IMPLICIT_WAIT_TIMEOUT)
 
-    def wait_for_page_loaded(self):
-        WebDriverWait(self.driver, timeout=Config.WAITER_TIMEOUT).until(lambda driver: self.URL in driver.current_url)
-
     def wait_for_exist(self, locator, timeout=Config.WAITER_TIMEOUT):
         return self._waiting_wrapper(EC.presence_of_element_located, locator, timeout)
 
@@ -87,3 +84,17 @@ class BasePage(object):
 
     def wait_for_not_visible(self, locator, timeout=Config.WAITER_TIMEOUT):
         return self._waiting_wrapper(EC.invisibility_of_element_located, locator, timeout)
+
+    def get_elements_with_not_stale_waiting(self, action_method, timeout=Config.WAITER_TIMEOUT):
+        self.driver.implicitly_wait(0)
+
+        def excpectation(driver):
+            try:
+                return action_method(driver)
+            except StaleElementReferenceException:
+                return False
+
+        try:
+            return WebDriverWait(self.driver, timeout).until(excpectation)
+        finally:
+            self.driver.implicitly_wait(Config.IMPLICIT_WAIT_TIMEOUT)
