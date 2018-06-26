@@ -5,4 +5,5 @@ geckodriver.log
 geckodriver
 geckodriver.exe
 chromedriver.exe
+IEDriverServer.exe
 Screenshots/*

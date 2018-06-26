@@ -74,13 +74,28 @@ def pytest_generate_tests(metafunc):
 def get_driver_for_browser(browser):
     if browser == "CHROME":
         options = webdriver.ChromeOptions()
-        options.add_argument("start-fullscreen")
+        options.add_argument("start-maximized")
         options.add_argument("disable-popup-blocking")
         options.add_argument("disable-infobars")
-        options.add_argument("user-data-dir=/Users/vladislav.bezugliy/Library/Application Support/Google/Chrome/")
-        return BROWSERS["CHROME"](chrome_options=options)
+        options.add_argument("--disable-web-security")
+        options.add_argument("--allow-running-insecure-content")
+        options.accept_untrusted_certs = True
+        options.add_argument("--no-sandbox")
+        options.add_experimental_option("useAutomationExtension", False)
+        # options.add_argument("--disable-dev-shm-usage")
+        # options.add_argument("user-data-dir=C:\\Users\\admin\\AppData\\Local\\Google\\Chrome\\User Data")
+        return BROWSERS[browser](chrome_options=options)
+        # capabilities = {
+        #                 'browserName': 'chrome',
+        #                 'chromeOptions':  {
+        #                 'useAutomationExtension': False,
+        #                 'forceDevToolsScreenshot': True,
+        #                 'args': ['--start-maximized', '--disable-infobars']
+        #                     }
+        #                 }
+        # return BROWSERS[browser](desired_capabilities=capabilities)
     else:
-        BROWSERS[browser]()
+        return BROWSERS[browser]()
 
 
 @pytest.fixture(scope="class")
@@ -88,6 +103,7 @@ def driver(request):
     try:
         browser_name = request.param.upper()
         driver = get_driver_for_browser(browser_name)
+        print(driver.capabilities)
         request.cls.driver = driver
         yield
     except (WebDriverException, Exception) as e:

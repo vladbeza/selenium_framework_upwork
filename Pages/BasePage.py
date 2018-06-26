@@ -57,7 +57,7 @@ class BasePage(object):
             self.get_element(locator_or_element).click()
 
     def type_text(self, locator, text, should_clear=True):
-        self.driver.switch_to_window(self.driver.current_window_handle)
+        self.driver.switch_to.window(self.driver.current_window_handle)
         element = self.get_element(locator)
         if should_clear:
             element.clear()

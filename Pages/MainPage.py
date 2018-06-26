@@ -7,9 +7,9 @@ from Elements.BaseElement import BaseElement
 
 class MainPageLocators(object):
 
-    work_type_input = (By.XPATH, '//div[@class="ee-input-holder"]/input[contains(@class,"form-control")]')
-    get_started_button = (By.XPATH, '//div[@class="ee-input-holder"]/input[contains(@class,"btn")]')
-    matches_dropdown_menu = (By.XPATH, '//div[contains(@id,"typeahead-13")]/ul[@class="dropdown-menu"]')
+    work_type_input = (By.CSS_SELECTOR, 'div.ee-input-holder input[class*=form-control]')
+    get_started_button = (By.CSS_SELECTOR, 'div.ee-input-holder > input[class*=btn]')
+    matches_dropdown_menu = (By.CSS_SELECTOR, 'div[id*=typeahead-13] ul.dropdown-menu')
     web_developers_category_item = (By.XPATH, '//ul[@class="__item" and @href="/cat/developers/"]')
     mob_developers_category_item = (By.XPATH, '//ul[@class="__item" and @href="/cat/mobile-developers/"]')
     designers_category_item = (By.XPATH, '//a[@class="__item" and @href="/cat/designers/"]')
@@ -18,16 +18,15 @@ class MainPageLocators(object):
     customer_agents_item = (By.XPATH, '//a[@class="__item" and @href="/cat/customer-service/"]')
     sales_and_marketing_item = (By.XPATH, '//a[@class="__item" and @href="/cat/sales-marketing/"]')
     accountants_item = (By.XPATH, '//a[@class="__item" and @href="/cat/accounting-consulting/"]')
-    all_categories_button = (By.XPATH, '//section[contains(@class, "__tiles-section")]//a[contains(@class, "btn-default") and @href="/i/freelancer-categories-all/"]')
-
+    all_categories_button = (By.CSS_SELECTOR, 'section[class*="__tiles-section"] a[class*="btn-default"][href="/i/freelancer-categories-all/"]')
 
 class StepModalWindowLocators(object):
 
-    main_window = (By.XPATH, '//div[@class="modal-dialog"]//div[@class="steps"]')
+    main_window = (By.CSS_SELECTOR, 'div.modal-dialog div.steps')
     close_button = (By.XPATH, '//div[@class="step-header"]/a[@class="icon-close"]')
-    next_button_main = (By.XPATH, '//div[contains(@class,"step-content")]//button[contains(@class,"btn")]')
+    next_button_main = (By.CSS_SELECTOR, 'div[class*=step-content] button[class*=btn]')
     back_button = (By.XPATH, '//div[contains(@class,"step-footer")]/div[@class="to-left"]/a')
-    next_button = (By.XPATH, '//div[contains(@class,"step-footer")]/div[@class="to-right"]/button[contains(@class,"btn")]')
+    next_button = (By.CSS_SELECTOR, 'div[class*=step-footer] > div.to-right > button[class*=btn]')
     skill_text_input = (By.XPATH, '//div[contains(@class,"step-content")]//div[@class="form-control"]/input')
     sign_up_first_name_input = (By.ID, 'signup_bogus_form_firstName')
     sign_up_last_name_input = (By.ID, 'signup_bogus_form_lastName')
@@ -72,7 +71,7 @@ class MainPage(BasePage):
         self.toolbox = MainToolbox(driver)
 
     def get_elements_in_matches_drop_down(self):
-        return self.get_element(MainPageLocators.matches_dropdown_menu).find_elements(By.XPATH, './li[contains(@id, "typeahead")]/a')
+        return self.get_element(MainPageLocators.matches_dropdown_menu).find_elements(By.CSS_SELECTOR, 'li[id*=typeahead] > a')
 
     def get_back_span_by_category_item(self, item_locator):
         self.get_element(item_locator).find_element(By.XPATH, '/span[@class="__back"]')
@@ -88,4 +87,5 @@ class MainPage(BasePage):
 
     def press_get_started_button(self):
         self.click(MainPageLocators.get_started_button)
+        self.wait_for_visible(StepModalWindowLocators.main_window)
         return self

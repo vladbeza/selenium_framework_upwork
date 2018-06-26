@@ -29,7 +29,7 @@ class TestMainPage(BaseTestSuite):
     def test_matches_dropdown_appearance(self):
         main_page = self.get_main_page()
         main_page.enter_text_to_get_started_entry("selenium")
-        assert main_page.get_element(MainPageLocators.matches_dropdown_menu).is_displayed()
+        assert main_page.wait_for_visible(MainPageLocators.matches_dropdown_menu)
 
     def test_matched_items_in_dropdown(self):
         main_page = self.get_main_page()
@@ -50,14 +50,17 @@ class TestMainPage(BaseTestSuite):
         assert main_page.get_element(StepModalWindowLocators.main_window).is_displayed()
 
     def test_steps_window_category_checkbox_checked(self):
+        if self.driver.capabilities['browserName'] == "internet explorer":
+            pytest.skip("IE bug")
         main_page = self.get_main_page()
         main_page.press_get_started_button()
-        WebDriverWait(self.driver, 3).until(EC.visibility_of_element_located(StepModalWindowLocators.main_window))
         steps_window = StepModalWindow(self.driver)
         steps_window.press_next_button_in_first_window().select_checkbox_item("Web, Mobile & Software Dev")
         assert steps_window.is_category_radio_box_checked("Web, Mobile & Software Dev") is True
 
     def test_pass_steps_window_to_signup_form(self):
+        if self.driver.capabilities['browserName'] == "internet explorer":
+            pytest.skip("IE bug")
         main_page = self.get_main_page()
         main_page.press_get_started_button()
         steps_window = StepModalWindow(self.driver)
@@ -77,7 +80,6 @@ class TestMainPage(BaseTestSuite):
 
     def test_open_signup_page_from_toolbox(self):
         main_page = self.get_main_page()
-        main_page.toolbox.press_signup_button()
         with wait_for_page_load(self.driver):
             main_page.toolbox.press_signup_button()
         assert self.driver.current_url == SignUpPage(self.driver).get_url()
