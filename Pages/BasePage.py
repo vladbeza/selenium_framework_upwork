@@ -64,12 +64,15 @@ class BasePage(object):
         element.send_keys(text)
         return element
 
-    def _waiting_wrapper(self, expectation, locator_or_element, timeout):
+    def _waiting_wrapper(self, expectation, locator_or_element, timeout, raise_on_fail=False):
         self.driver.implicitly_wait(0)
         try:
             return WebDriverWait(self.driver, timeout).until(expectation(locator_or_element))
-        except TimeoutException:
-            return False
+        except TimeoutException as ex:
+            if raise_on_fail:
+                raise ex
+            else:
+                return False
         finally:
             self.driver.implicitly_wait(Config.IMPLICIT_WAIT_TIMEOUT)
 
@@ -79,8 +82,8 @@ class BasePage(object):
     def wait_for_not_exist(self, element, timeout=Config.WAITER_TIMEOUT):
         return self._waiting_wrapper(EC.staleness_of, element, timeout)
 
-    def wait_for_visible(self, locator, timeout=Config.WAITER_TIMEOUT):
-        return self._waiting_wrapper(EC.visibility_of_element_located, locator, timeout)
+    def wait_for_visible(self, locator, timeout=Config.WAITER_TIMEOUT, raise_on_fail=False):
+        return self._waiting_wrapper(EC.visibility_of_element_located, locator, timeout, raise_on_fail)
 
     def wait_for_not_visible(self, locator, timeout=Config.WAITER_TIMEOUT):
         return self._waiting_wrapper(EC.invisibility_of_element_located, locator, timeout)

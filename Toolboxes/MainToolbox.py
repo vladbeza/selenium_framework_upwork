@@ -1,24 +1,28 @@
 from selenium.webdriver.common.by import By
-from selenium.webdriver.common.keys import Keys
 
-from Pages.BasePage import BasePage
+from Toolboxes.AbstractToolbox import Toolbox
+
+class AuthorizedToolbox(Toolbox):
+
+    search_input = (By.NAME, "q")
+    search_field_dropdown = (By.ID, "search-dropdown")
+    search_field_expand_arrow = (By.CSS_SELECTOR, "span[class *= air-icon-arrow-expand]")
+    search_freelancers_search_option = (By.CSS_SELECTOR, "li[data_label = Freelancers]")
+    search_jobs_search_option = (By.CSS_SELECTOR, "li[data_label = Jobs]")
 
 
-class MainToolboxLocators(object):
+class MainToolbox(Toolbox):
 
     search_input = (By.ID, "q")
     search_field_expand_arrow = (By.CSS_SELECTOR, "div[class *= input-group-addon]")
     logo = (By.CSS_SELECTOR, 'a[data-qa=logo]')
-
     search_freelancers_search_option = (By.CSS_SELECTOR, 'a[data-qa=freelancer_value]')
     search_jobs_search_option = (By.CSS_SELECTOR, 'a[data-qa=client_value]')
     search_field_dropdown = (By.CSS_SELECTOR, 'a[data-qa=search_field_dropdown]')
-
     login_button = (By.CSS_SELECTOR, 'a[data-qa=login]')
     how_it_works = (By.CSS_SELECTOR, 'a[href="/i/how-it-works/client/"]')
     sign_up = (By.CSS_SELECTOR, 'a[data-qa=signup]')
     post_job_button = (By.CSS_SELECTOR, 'a[data-qa=cta_post_job]')
-
     web_dev_link = (By.CSS_SELECTOR, 'a[href="/cat/developers/"]')
     mobile_dev_link = (By.CSS_SELECTOR, 'a[href="/cat/mobile-developers/"]')
     design_link = (By.CSS_SELECTOR, 'a[href="/cat/designers/"]')
@@ -28,41 +32,13 @@ class MainToolboxLocators(object):
     marketing_support_link = (By.CSS_SELECTOR, 'a[href="/cat/sales-marketing/"]')
     accounting_link = (By.CSS_SELECTOR, 'a[href="/cat/accounting-consulting/"]')
     all_categories_link = (By.CSS_SELECTOR, 'a[href="/i/freelancer-categories-all/"]')
-
     primary_nav_bar = (By.CSS_SELECTOR, 'a[data-qa-section=primary-navbar]')
 
-
-class MainToolbox(BasePage):
-
-    def choose_freelancers_search_value(self):
-        if not self.is_exist(MainToolboxLocators.search_field_dropdown):
-            self.get_element(MainToolboxLocators.search_field_expand_arrow).click()
-        self.get_element(MainToolboxLocators.search_freelancers_search_option).click()
-        return self
-
-    def choose_jobs_search_value(self):
-        if not self.is_exist(MainToolboxLocators.search_field_dropdown):
-            self.get_element(MainToolboxLocators.search_field_expand_arrow).click()
-        self.get_element(MainToolboxLocators.search_jobs_search_option).click()
-        return self
-
-    def get_search_current_placeholder(self):
-        return self.get_element(MainToolboxLocators.search_input).get_attribute("placeholder")
-
-    def get_search_current_text(self):
-        return self.get_element(MainToolboxLocators.search_input).text
-
-    def create_search(self, text_for_search, should_submit=True):
-        search = self.type_text(MainToolboxLocators.search_input, text_for_search)
-        if should_submit:
-            search.send_keys(Keys.RETURN)
-        return self
-
     def press_login_button(self):
-        self.click(MainToolboxLocators.login_button)
+        self.click(self.login_button)
 
     def press_signup_button(self):
-        self.click(MainToolboxLocators.sign_up)
+        self.click(self.sign_up)
 
     def press_category_item(self, locator):
         element = self.driver.find_elements(*locator)[1]

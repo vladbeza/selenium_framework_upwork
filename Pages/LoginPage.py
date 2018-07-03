@@ -24,6 +24,7 @@ class LoginPage(BasePage):
         self.type_text(LoginPageLocators.login_name_input, email)
         self.click(LoginPageLocators.continue_button)
 
+        self.wait_for_visible(LoginPageLocators.login_password_input, raise_on_fail=True)
         self.type_text(LoginPageLocators.login_password_input, password)
         self.click(LoginPageLocators.login_button)
         return self

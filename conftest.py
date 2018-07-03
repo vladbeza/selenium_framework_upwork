@@ -68,6 +68,9 @@ def get_optional_arg(config, option):
 
 def pytest_generate_tests(metafunc):
     if 'driver' in metafunc.fixturenames:
+        # if 'login' in [mark.name for mark in metafunc.module.pytestmark]:
+        #     metafunc.parametrize("driver", Config.BROWSERS, indirect=True, scope="function")
+        # else:
         metafunc.parametrize("driver", Config.BROWSERS, indirect=True, scope="class")
 
 
@@ -98,7 +101,7 @@ def get_driver_for_browser(browser):
         return BROWSERS[browser]()
 
 
-@pytest.fixture(scope="class")
+@pytest.fixture
 def driver(request):
     try:
         browser_name = request.param.upper()
@@ -129,8 +132,18 @@ def screenshot_on_failure(request):
         request.cls.driver.save_screenshot(screen_path)
 
 
+def pytest_runtest_setup(item):
+    previousfailed = getattr(item.parent, "_previousfailed", None)
+    if previousfailed is not None:
+        pytest.xfail("previous test failed (%s)" %previousfailed.name)
+
+
 @pytest.hookimpl(hookwrapper=True, tryfirst=True)
 def pytest_runtest_makereport(item, call):
+    if "login" in item.keywords:
+        if call.excinfo is not None:
+            parent = item.parent
+            parent._previousfailed = item
     outcome = yield
     rep = outcome.get_result()
     setattr(item, "rep_" + rep.when, rep)

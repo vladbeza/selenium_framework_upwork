@@ -1,13 +1,10 @@
 import pytest
 
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
-
 from Tests.BaseTestSuite import BaseTestSuite
 from Pages.MainPage import MainPage, MainPageLocators, StepModalWindowLocators, StepModalWindow
 from Pages.SignUpPage import SignUpPage
 from Pages.SearchPage import SearchPage
-from Toolboxes.MainToolbox import MainToolboxLocators
+from Toolboxes.MainToolbox import MainToolbox
 from Pages.DeveloperTypesPages import WebDeveloperPage, MobileDeveloperPage, DesignerPage, WritingPage,\
     AdminSupportPage, CustomerServicePage, MarketingPage, AccountingPage
 from Pages.LoginPage import LoginPage
@@ -85,14 +82,14 @@ class TestMainPage(BaseTestSuite):
         assert self.driver.current_url == SignUpPage(self.driver).get_url()
 
     @pytest.mark.parametrize("locator, expected_page",
-                             [(MainToolboxLocators.web_dev_link, WebDeveloperPage),
-                              (MainToolboxLocators.mobile_dev_link, MobileDeveloperPage),
-                              (MainToolboxLocators.design_link, DesignerPage),
-                              (MainToolboxLocators.writing_link, WritingPage),
-                              (MainToolboxLocators.admin_support_link, AdminSupportPage),
-                              (MainToolboxLocators.customer_support_link, CustomerServicePage),
-                              (MainToolboxLocators.marketing_support_link, MarketingPage),
-                              (MainToolboxLocators.accounting_link, AccountingPage)])
+                             [(MainToolbox.web_dev_link, WebDeveloperPage),
+                              (MainToolbox.mobile_dev_link, MobileDeveloperPage),
+                              (MainToolbox.design_link, DesignerPage),
+                              (MainToolbox.writing_link, WritingPage),
+                              (MainToolbox.admin_support_link, AdminSupportPage),
+                              (MainToolbox.customer_support_link, CustomerServicePage),
+                              (MainToolbox.marketing_support_link, MarketingPage),
+                              (MainToolbox.accounting_link, AccountingPage)])
     def test_open_category(self, locator, expected_page):
         main_page = self.get_main_page()
         with wait_for_page_load(self.driver):
