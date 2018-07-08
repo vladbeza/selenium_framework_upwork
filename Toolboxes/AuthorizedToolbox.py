@@ -11,13 +11,13 @@ class AuthorizedToolbox(Toolbox):
     search_freelancers_search_option = (By.CSS_SELECTOR, "li[data_label = Freelancers]")
     search_jobs_search_option = (By.CSS_SELECTOR, "li[data_label = Jobs]")
 
-    profile_block = (By.CSS_SELECTOR, "li[class*=dropdown-account]")
-    profile_settigns_button = (By.CSS_SELECTOR, "a[href=/UserSettings/profile]")
-    logout_button = (By.CSS_SELECTOR, "form#nav-logout")
+    account_name = (By.CSS_SELECTOR, "div#layout div.media-body span[class*=account-name]")
+    profile_settigns_button = (By.CSS_SELECTOR, "div#layout a[href=/UserSettings/profile]")
+    logout_button = (By.CSS_SELECTOR, "div#layout form#nav-logout")
 
     def logout(self):
-        self.wait_for_exist(self.profile_block, raise_on_fail=True)
-        self.click(self.profile_block)
+        self.wait_for_visible(self.account_name, raise_on_fail=True)
+        self.click(self.account_name)
         self.wait_for_visible(self.logout_button)
         with wait_for_page_load(self.driver):
             self.click(self.logout_button)

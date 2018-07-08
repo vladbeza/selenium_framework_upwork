@@ -11,9 +11,6 @@ class wait_for_page_load(object):
         self.old_page = self.browser.find_element_by_tag_name('html')
 
     def __exit__(self, exception_type, exception_value, traceback):
-        print(exception_type)
-        print(exception_value)
-        print(traceback)
         if exception_type:
             raise exception_type
         self.wait_for()

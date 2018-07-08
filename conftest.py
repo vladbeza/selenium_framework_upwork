@@ -103,22 +103,27 @@ def get_driver_for_browser(browser):
 
 @pytest.fixture
 def driver(request):
+    driver = None
     try:
         browser_name = request.param.upper()
         driver = get_driver_for_browser(browser_name)
         print(driver.capabilities)
-        request.cls.driver = driver
-        yield
+        driver.implicitly_wait(Config.IMPLICIT_WAIT_TIMEOUT)
+        if driver.name.upper() != "CHROME":
+            driver.maximize_window()
+        if request.cls is not None:
+            request.cls.driver = driver
+        yield driver
     except (WebDriverException, Exception) as e:
-        logging.fatal("Unsupported browser type {}".format(e))
+        logging.fatal(str(e))
         raise e
-    else:
-        driver.quit()
+    finally:
+        if driver is not None:
+            create_screenshot_on_failure(request)
+            driver.quit()
 
 
-@pytest.fixture(autouse=True)
-def screenshot_on_failure(request):
-    yield
+def create_screenshot_on_failure(request):
     test_name = request.node.name
     if request.node.rep_call.failed:
         current_date = str(datetime.now()).split(".")[0]
@@ -129,7 +134,7 @@ def screenshot_on_failure(request):
         if not os.path.exists(screens_folder):
             os.makedirs(screens_folder)
         screen_path = os.path.join(screens_folder, "{}{}.png".format(test_name, current_date))
-        request.cls.driver.save_screenshot(screen_path)
+        request._fixture_values["driver"].save_screenshot(screen_path)
 
 
 def pytest_runtest_setup(item):

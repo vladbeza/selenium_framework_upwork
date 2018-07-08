@@ -40,6 +40,9 @@ class MainToolbox(Toolbox):
     def press_signup_button(self):
         self.click(self.sign_up)
 
+    def press_how_it_works_button(self):
+        self.click(self.how_it_works)
+
     def press_category_item(self, locator):
         element = self.driver.find_elements(*locator)[1]
         self.click(element)
