@@ -18,6 +18,6 @@ class AuthorizedToolbox(Toolbox):
     def logout(self):
         self.wait_for_visible(self.account_name, raise_on_fail=True)
         self.click(self.account_name)
-        self.wait_for_visible(self.logout_button)
+        self.wait_for_clickable(self.logout_button, timeout=10, raise_on_fail=True)
         with wait_for_page_load(self.driver):
             self.click(self.logout_button)

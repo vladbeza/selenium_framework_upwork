@@ -6,5 +6,7 @@ geckodriver
 geckodriver.exe
 chromedriver.exe
 IEDriverServer.exe
-Screenshots/*
+Tests/Screenshots/*
 .cache
+selenium-server-standalone*
+.*

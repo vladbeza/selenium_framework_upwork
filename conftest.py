@@ -5,6 +5,7 @@ from datetime import datetime
 
 from selenium import webdriver
 from selenium.common.exceptions import WebDriverException
+from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
 
 from TestData.Configuration import Config
 
@@ -24,17 +25,6 @@ def pytest_addoption(parser):
     parser.addoption("--browser", action="append")
     parser.addoption("--login", action="store", required=False)
     parser.addoption("--password", action="store", required=False)
-    parser.addoption('--host',
-                     action="store",
-                     required=False,
-                     help='host that the selenium server is listening on, '
-                          'which will default to the cloud provider default '
-                          'or localhost.')
-    parser.addoption('--port', type=int, action="store",
-                     required=False,
-                     help='port that the selenium server is listening on, '
-                          'which will default to the cloud provider default '
-                          'or localhost.')
     parser.addoption('--firefox_profile_path',
                      action="store",
                      help='path to Firefox browser specific profile')
@@ -47,12 +37,20 @@ def pytest_addoption(parser):
     parser.addoption('--chromedriver_path',
                      action="store",
                      help='path to Chrome driver executable')
+    parser.addoption('--remote_hub',
+                     action='store',
+                     help='remote hub address')
+    parser.addoption('--platform',
+                     action='store',
+                     help='platform where run remote test')
 
 
 def pytest_configure(config):
     Config.BASE_URL = config.getoption("--base_url")
     Config.LOGIN = get_optional_arg(config, "--login")
     Config.PASSWORD = get_optional_arg(config, "--password")
+    Config.REMOTE_HUB = get_optional_arg(config, "--remote_hub")
+    Config.PLATFORM = get_optional_arg(config, "--platform")
     browsers = get_optional_arg(config, "--browser")
     if browsers is not None:
         Config.BROWSERS = browsers
@@ -68,13 +66,10 @@ def get_optional_arg(config, option):
 
 def pytest_generate_tests(metafunc):
     if 'driver' in metafunc.fixturenames:
-        # if 'login' in [mark.name for mark in metafunc.module.pytestmark]:
-        #     metafunc.parametrize("driver", Config.BROWSERS, indirect=True, scope="function")
-        # else:
         metafunc.parametrize("driver", Config.BROWSERS, indirect=True, scope="class")
 
 
-def get_driver_for_browser(browser):
+def get_driver_for_browser(request, browser):
     if browser == "CHROME":
         options = webdriver.ChromeOptions()
         options.add_argument("start-maximized")
@@ -82,23 +77,37 @@ def get_driver_for_browser(browser):
         options.add_argument("disable-infobars")
         options.add_argument("--disable-web-security")
         options.add_argument("--allow-running-insecure-content")
-        options.accept_untrusted_certs = True
         options.add_argument("--no-sandbox")
         options.add_experimental_option("useAutomationExtension", False)
-        # options.add_argument("--disable-dev-shm-usage")
-        # options.add_argument("user-data-dir=C:\\Users\\admin\\AppData\\Local\\Google\\Chrome\\User Data")
-        return BROWSERS[browser](chrome_options=options)
-        # capabilities = {
-        #                 'browserName': 'chrome',
-        #                 'chromeOptions':  {
-        #                 'useAutomationExtension': False,
-        #                 'forceDevToolsScreenshot': True,
-        #                 'args': ['--start-maximized', '--disable-infobars']
-        #                     }
-        #                 }
-        # return BROWSERS[browser](desired_capabilities=capabilities)
-    else:
-        return BROWSERS[browser]()
+        chrome_profile = get_optional_arg(request.config, "--chrome_profile_path")
+        if chrome_profile is not None:
+            options.add_argument("user-data-dir={}".format(chrome_profile))
+        if Config.REMOTE_HUB is not None:
+            return BROWSERS["REMOTE"](command_executor=Config.REMOTE_HUB, desired_capabilities=DesiredCapabilities.CHROME,
+                                      options=options)
+        chromedriver_path = get_optional_arg(request.config, "--chromedriver_path")
+        return BROWSERS[browser](executable_path=chromedriver_path if chromedriver_path is not None else "chromedriver",
+                                 chrome_options=options)
+    if Config.REMOTE_HUB is not None:
+        capabilities = None
+        if browser == "FIREFOX":
+            capabilities = DesiredCapabilities.FIREFOX
+        elif browser == "IE":
+            capabilities = DesiredCapabilities.INTERNETEXPLORER
+        elif browser == "SAFARI":
+            capabilities = DesiredCapabilities.SAFARI
+
+        if Config.PLATFORM is not None:
+            capabilities["platform"] = Config.PLATFORM
+
+        return BROWSERS["REMOTE"](command_executor=Config.REMOTE_HUB,
+                                  desired_capabilities=capabilities)
+
+    if browser == "FIREFOX":
+        geckodriver_path = get_optional_arg(request.config, "--geckodriver_path")
+        return BROWSERS[browser](executable_path=geckodriver_path if geckodriver_path is not None else "geckodriver")
+
+    return BROWSERS[browser]()
 
 
 @pytest.fixture
@@ -106,9 +115,10 @@ def driver(request):
     driver = None
     try:
         browser_name = request.param.upper()
-        driver = get_driver_for_browser(browser_name)
+        driver = get_driver_for_browser(request, browser_name)
         print(driver.capabilities)
         driver.implicitly_wait(Config.IMPLICIT_WAIT_TIMEOUT)
+        driver.set_page_load_timeout(60)
         if driver.name.upper() != "CHROME":
             driver.maximize_window()
         if request.cls is not None:
@@ -119,11 +129,12 @@ def driver(request):
         raise e
     finally:
         if driver is not None:
-            create_screenshot_on_failure(request)
             driver.quit()
 
 
+@pytest.fixture(scope="function", autouse=True)
 def create_screenshot_on_failure(request):
+    yield
     test_name = request.node.name
     if request.node.rep_call.failed:
         current_date = str(datetime.now()).split(".")[0]
@@ -134,7 +145,7 @@ def create_screenshot_on_failure(request):
         if not os.path.exists(screens_folder):
             os.makedirs(screens_folder)
         screen_path = os.path.join(screens_folder, "{}{}.png".format(test_name, current_date))
-        request._fixture_values["driver"].save_screenshot(screen_path)
+        request.instance.driver.save_screenshot(screen_path)
 
 
 def pytest_runtest_setup(item):

@@ -8,3 +8,5 @@ class Config(object):
     WAITER_TIMEOUT = 5
     LOGIN = None
     PASSWORD = None
+    REMOTE_HUB = None
+    PLATFORM = None

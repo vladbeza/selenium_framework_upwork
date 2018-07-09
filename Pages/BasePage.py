@@ -88,6 +88,9 @@ class BasePage(object):
     def wait_for_not_visible(self, locator, timeout=Config.WAITER_TIMEOUT):
         return self._waiting_wrapper(EC.invisibility_of_element_located, locator, timeout)
 
+    def wait_for_clickable(self, locator, timeout=Config.WAITER_TIMEOUT, raise_on_fail=False):
+        return self._waiting_wrapper(EC.element_to_be_clickable, locator, timeout, raise_on_fail)
+
     def get_elements_with_not_stale_waiting(self, action_method, timeout=Config.WAITER_TIMEOUT):
         self.driver.implicitly_wait(0)
 
