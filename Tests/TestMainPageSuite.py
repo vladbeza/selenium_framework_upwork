@@ -72,7 +72,8 @@ class TestMainPage(BaseTestSuite):
 
     def test_open_login_page(self):
         main_page = self.get_main_page()
-        main_page.toolbox.press_login_button()
+        with wait_for_page_load(self.driver):
+            main_page.toolbox.press_login_button()
         assert self.driver.current_url == LoginPage(self.driver).get_url()
 
     def test_open_signup_page_from_toolbox(self):

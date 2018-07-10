@@ -13,14 +13,14 @@ class Toolbox(BasePage):
 
     def choose_freelancers_search_value(self):
         if not self.is_exist(self.search_field_dropdown):
-            self.get_element(self.search_field_expand_arrow).click()
-        self.get_element(self.search_freelancers_search_option).click()
+            self.click(self.search_field_expand_arrow)
+        self.click(self.search_freelancers_search_option)
         return self
 
     def choose_jobs_search_value(self):
         if not self.is_exist(self.search_field_dropdown):
-            self.get_element(self.search_field_expand_arrow).click()
-        self.get_element(self.search_jobs_search_option).click()
+            self.click(self.search_field_expand_arrow)
+        self.click(self.search_jobs_search_option)
         return self
 
     def get_search_current_placeholder(self):

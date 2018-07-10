@@ -14,4 +14,4 @@ class SearchPage(BasePage):
 
     def get_count_of_found_items_on_page(self):
         return len(self.get_elements_with_not_stale_waiting(lambda driver: driver.find_element
-                (*SearchPageLocators.jobs_list).find_elements(By.CSS_SELECTOR, "section.job-tile"), timeout=15))
+                (*SearchPageLocators.jobs_list).find_elements(By.CSS_SELECTOR, "section.job-tile"), timeout=20))

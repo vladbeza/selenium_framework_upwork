@@ -54,11 +54,11 @@ class BasePage(object):
         if isinstance(locator_or_element, WebElement):
             locator_or_element.click()
         else:
-            self.get_element(locator_or_element).click()
+            self.wait_for_clickable(locator_or_element).click()
 
     def type_text(self, locator, text, should_clear=True):
         self.driver.switch_to.window(self.driver.current_window_handle)
-        element = self.get_element(locator)
+        element = self.wait_for_clickable(locator)
         if should_clear:
             element.clear()
         element.send_keys(text)
@@ -76,19 +76,19 @@ class BasePage(object):
         finally:
             self.driver.implicitly_wait(Config.IMPLICIT_WAIT_TIMEOUT)
 
-    def wait_for_exist(self, locator, timeout=Config.WAITER_TIMEOUT):
-        return self._waiting_wrapper(EC.presence_of_element_located, locator, timeout)
+    def wait_for_exist(self, locator, timeout=Config.WAITER_TIMEOUT, raise_on_fail=True):
+        return self._waiting_wrapper(EC.presence_of_element_located, locator, timeout, raise_on_fail)
 
     def wait_for_not_exist(self, element, timeout=Config.WAITER_TIMEOUT):
         return self._waiting_wrapper(EC.staleness_of, element, timeout)
 
-    def wait_for_visible(self, locator, timeout=Config.WAITER_TIMEOUT, raise_on_fail=False):
+    def wait_for_visible(self, locator, timeout=Config.WAITER_TIMEOUT, raise_on_fail=True):
         return self._waiting_wrapper(EC.visibility_of_element_located, locator, timeout, raise_on_fail)
 
     def wait_for_not_visible(self, locator, timeout=Config.WAITER_TIMEOUT):
         return self._waiting_wrapper(EC.invisibility_of_element_located, locator, timeout)
 
-    def wait_for_clickable(self, locator, timeout=Config.WAITER_TIMEOUT, raise_on_fail=False):
+    def wait_for_clickable(self, locator, timeout=Config.WAITER_TIMEOUT, raise_on_fail=True):
         return self._waiting_wrapper(EC.element_to_be_clickable, locator, timeout, raise_on_fail)
 
     def get_elements_with_not_stale_waiting(self, action_method, timeout=Config.WAITER_TIMEOUT):

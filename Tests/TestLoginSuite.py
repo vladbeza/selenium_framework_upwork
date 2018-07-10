@@ -3,7 +3,6 @@ import pytest
 from Tests.BaseTestSuite import BaseTestSuite
 from TestData.Configuration import Config
 from Pages.MainPage import MainPage
-from Pages.LoginPage import LoginPage
 from Pages.FindWorkPageAuthorized import FindWorkPageAuthorized
 from Pages.LoginPage import LoginPage
 
@@ -19,10 +18,10 @@ class TestLoginSuite(BaseTestSuite):
     def login(self, email, password):
         main_page = MainPage(self.driver)
         main_page.open_page()
-        main_page.toolbox.press_login_button()
-        login_page = LoginPage(self.driver)
         with wait_for_page_load(self.driver):
-            login_page.login(email, password)
+            main_page.toolbox.press_login_button()
+        login_page = LoginPage(self.driver)
+        login_page.login(email, password)
 
     def test_login_logout(self):
         self.login(Config.LOGIN, Config.PASSWORD)

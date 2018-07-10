@@ -1,6 +1,7 @@
 from selenium.webdriver.common.by import By
 
 from Pages.BasePage import BasePage
+from Utils import wait_for_page_load
 
 
 class LoginPageLocators(object):
@@ -24,9 +25,10 @@ class LoginPage(BasePage):
         self.type_text(LoginPageLocators.login_name_input, email)
         self.click(LoginPageLocators.continue_button)
 
-        self.wait_for_visible(LoginPageLocators.login_password_input, raise_on_fail=True)
+        self.wait_for_visible(LoginPageLocators.login_password_input)
         self.type_text(LoginPageLocators.login_password_input, password)
-        self.click(LoginPageLocators.login_button)
+        with wait_for_page_load(self.driver):
+            self.click(LoginPageLocators.login_button)
         return self
 
     def get_login_name_value(self):
