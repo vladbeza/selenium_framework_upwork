@@ -8,6 +8,7 @@ from Pages.MainPage import MainPage
 def test_navigate_to_freelancer_faq(driver):
     pass
 
+
 @scenario('Features/open_freelance_faq_get_pain.feature', 'Open client about page')
 def test_navigate_to_client_faq(driver):
     pass
@@ -18,6 +19,7 @@ def open_how_it_works_page(driver):
     freelancer_about_page = HowItWorksFreelancerPage(driver)
     freelancer_about_page.open_page()
     return freelancer_about_page
+
 
 @given("I'm on main page")
 def open_main_page(driver):
@@ -45,4 +47,4 @@ def press_how_it_works_page(open_main_page):
 
 @then("Client faq page is opened")
 def verify_client_faq_page_opened(driver):
-    assert driver.current_url == HowItWorksClientPage(driver).get_url()
+    assert HowItWorksClientPage(driver).is_url_opened()

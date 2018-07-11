@@ -44,5 +44,5 @@ class MainToolbox(Toolbox):
         self.click(self.how_it_works)
 
     def press_category_item(self, locator):
-        element = self.driver.find_elements(*locator)[1]
+        element = self.get_elements_with_waiting(locator)[1]
         self.click(element)

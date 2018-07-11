@@ -39,7 +39,7 @@ class TestMainPage(BaseTestSuite):
         main_page.scroll_page(-100)
         with wait_for_page_load(self.driver):
             button.click()
-        assert self.driver.current_url == AllFreelancersCategoriesPage(self.driver).get_url()
+        assert AllFreelancersCategoriesPage(self.driver).is_url_opened()
 
     def test_modal_steps_window_appearance(self):
         main_page = self.get_main_page()
@@ -74,13 +74,13 @@ class TestMainPage(BaseTestSuite):
         main_page = self.get_main_page()
         with wait_for_page_load(self.driver):
             main_page.toolbox.press_login_button()
-        assert self.driver.current_url == LoginPage(self.driver).get_url()
+        assert LoginPage(self.driver).is_url_opened()
 
     def test_open_signup_page_from_toolbox(self):
         main_page = self.get_main_page()
         with wait_for_page_load(self.driver):
             main_page.toolbox.press_signup_button()
-        assert self.driver.current_url == SignUpPage(self.driver).get_url()
+        assert SignUpPage(self.driver).is_url_opened()
 
     @pytest.mark.parametrize("locator, expected_page",
                              [(MainToolbox.web_dev_link, WebDeveloperPage),
@@ -95,7 +95,7 @@ class TestMainPage(BaseTestSuite):
         main_page = self.get_main_page()
         with wait_for_page_load(self.driver):
             main_page.toolbox.press_category_item(locator)
-        assert self.driver.current_url == expected_page(self.driver).get_url()
+        assert expected_page(self.driver).is_url_opened()
 
     def test_toolbox_search_status(self):
         main_page = self.get_main_page()

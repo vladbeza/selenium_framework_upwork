@@ -1,6 +1,6 @@
 import pytest
-import logging
 import os
+import logging
 from datetime import datetime
 
 from selenium import webdriver
@@ -18,6 +18,9 @@ BROWSERS = {
     'PHANTOMJS': webdriver.PhantomJS,
     'REMOTE': webdriver.Remote
 }
+
+logging.basicConfig(format='%(asctime)s %(message)s', level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 
 def pytest_addoption(parser):
@@ -60,7 +63,7 @@ def get_optional_arg(config, option):
     try:
         return config.getoption(option)
     except ValueError as a:
-        print("Couldn't get option {}. {}".format(option, a))
+        logger.warning("Couldn't get option {}. {}".format(option, a))
         return None
 
 
@@ -116,7 +119,7 @@ def driver(request):
     try:
         browser_name = request.param.upper()
         driver = get_driver_for_browser(request, browser_name)
-        print(driver.capabilities)
+        logger.info(driver.capabilities)
         driver.implicitly_wait(Config.IMPLICIT_WAIT_TIMEOUT)
         driver.set_page_load_timeout(60)
         if driver.name.upper() != "CHROME":
@@ -137,15 +140,18 @@ def create_screenshot_on_failure(request):
     yield
     test_name = request.node.name
     if request.node.rep_call.failed:
-        current_date = str(datetime.now()).split(".")[0]
-        for symbol in [" ", "[", "]", ".", ":"]:
-            current_date = current_date.replace(symbol, "_")
-            test_name = test_name.replace(symbol, "_")
-        screens_folder = os.path.join(os.getcwd(), "Screenshots")
-        if not os.path.exists(screens_folder):
-            os.makedirs(screens_folder)
-        screen_path = os.path.join(screens_folder, "{}{}.png".format(test_name, current_date))
-        request.instance.driver.save_screenshot(screen_path)
+        try:
+            current_date = str(datetime.now()).split(".")[0]
+            for symbol in [" ", "[", "]", ".", ":"]:
+                current_date = current_date.replace(symbol, "_")
+                test_name = test_name.replace(symbol, "_")
+            screens_folder = os.path.join(os.getcwd(), "Screenshots")
+            if not os.path.exists(screens_folder):
+                os.makedirs(screens_folder)
+            screen_path = os.path.join(screens_folder, "{}{}.png".format(test_name, current_date))
+            request.instance.driver.save_screenshot(screen_path)
+        except Exception as ex:
+            logger.warning("Couldn't take screenshot. {}".format(ex))
 
 
 def pytest_runtest_setup(item):

@@ -9,6 +9,7 @@ class wait_for_page_load(object):
 
     def __enter__(self):
         self.old_page = self.browser.find_element_by_tag_name('html')
+        self.old_url = self.browser.current_url
 
     def __exit__(self, exception_type, exception_value, traceback):
         if exception_type:
@@ -30,4 +31,5 @@ class wait_for_page_load(object):
 
     def page_has_loaded(self):
         new_page = self.browser.find_element_by_tag_name('html')
-        return new_page.id != self.old_page.id
+        new_url = self.browser.current_url
+        return new_page.id != self.old_page.id and new_url != self.old_url

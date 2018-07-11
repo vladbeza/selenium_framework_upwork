@@ -25,8 +25,8 @@ class TestLoginSuite(BaseTestSuite):
 
     def test_login_logout(self):
         self.login(Config.LOGIN, Config.PASSWORD)
-        assert self.driver.current_url == FindWorkPageAuthorized(self.driver).get_url()
+        assert FindWorkPageAuthorized(self.driver).is_url_opened()
         FindWorkPageAuthorized(self.driver).toolbox.logout()
-        assert self.driver.current_url == LoginPage(self.driver).get_url()
+        assert LoginPage(self.driver).is_url_opened()
 
 
