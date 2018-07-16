@@ -1,3 +1,5 @@
+import allure
+
 from selenium.webdriver.common.by import By
 
 from .BasePage import BasePage
@@ -13,6 +15,7 @@ class UpdatePage(BasePage):
 
     URL = "/"
 
+    @allure.step("Click status button")
     def click_status_button(self):
         self.get_element(UpdatePageLocators.check_status_button).click()
 

@@ -1,9 +1,12 @@
+import allure
+
 from selenium.webdriver.common.by import By
 
 from enum import Enum
 
 from Pages.BasePage import BasePage
 from Toolboxes.MainToolbox import MainToolbox
+
 
 class FaqType(Enum):
 
@@ -35,16 +38,19 @@ class HowItWorksBasePage(BasePage):
             ending = "faq/"
         return base + ending
 
+    @allure.step("Open client faq")
     def open_client_faq(self):
         self.click(self.client_faq)
         self.faq_type = FaqType.CLIENT
         return self
 
+    @allure.step("Open freelancer faq")
     def open_freelancer_faq(self):
         self.click(self.freelancer_faq)
         self.faq_type = FaqType.FREELANCER
         return self
 
+    @allure.step("Open about faq")
     def open_faqs(self):
         self.click(self.faqs)
         self.faq_type = FaqType.ABOUT
@@ -67,6 +73,7 @@ class HowItWorksFreelancerPage(HowItWorksBasePage):
         super(HowItWorksFreelancerPage, self).__init__(driver)
         self.faq_type = FaqType.FREELANCER
 
+    @allure.step("Press get paid button")
     def press_get_paid(self):
         self.click(self.get_paid_button)
         return self

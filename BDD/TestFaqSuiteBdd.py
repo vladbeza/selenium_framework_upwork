@@ -1,3 +1,5 @@
+import allure
+
 from pytest_bdd import scenarios, given, when, then, parsers, scenario
 
 from Pages.HowItWorksPage import HowItWorksFreelancerPage, HowItWorksClientPage
@@ -5,11 +7,13 @@ from Pages.MainPage import MainPage
 
 
 @scenario('Features/open_freelance_faq_get_pain.feature', 'Navigating to freelancer about page')
+@allure.feature("BDD. Possible to get about info")
 def test_navigate_to_freelancer_faq(driver):
     pass
 
 
 @scenario('Features/open_freelance_faq_get_pain.feature', 'Open client about page')
+@allure.feature("BDD. Possible to get about info")
 def test_navigate_to_client_faq(driver):
     pass
 

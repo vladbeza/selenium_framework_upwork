@@ -1,9 +1,12 @@
+import allure
+
 from TestData.Configuration import Config
 from selenium.common.exceptions import NoSuchElementException, StaleElementReferenceException
 from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.remote.webelement import WebElement
+from selenium.webdriver.support.event_firing_webdriver import EventFiringWebElement
 
 
 class BasePage(object):
@@ -21,7 +24,8 @@ class BasePage(object):
             return self.URL
 
     def open_page(self):
-        self.driver.get(self.get_url())
+        with allure.step("Open page {}".format(self.__class__.__name__)):
+            self.driver.get(self.get_url())
 
     def is_url_opened(self, time_to_wait=Config.WAITER_TIMEOUT):
         return self._waiting_wrapper(lambda driver: driver.current_url == self.get_url(), None, time_to_wait)
@@ -49,9 +53,11 @@ class BasePage(object):
     def is_radio_checked(self, locator):
         return self.get_element(locator).get_attribute("checked") == "true"
 
+    @allure.step("Scroll page in {1} pixels vertically, {2} pixels horizontally")
     def scroll_page(self, vertical_px, horizontal_px=0):
         self.driver.execute_script("window.scrollBy({}, {});".format(horizontal_px, vertical_px))
 
+    @allure.step("Scroll page to element {1}")
     def scroll_to_element(self, locator):
         element = self.driver.find_element(*locator)
         self.driver.execute_script("arguments[0].scrollIntoView();", element)
@@ -59,7 +65,7 @@ class BasePage(object):
 
     def click(self, locator_or_element):
         self.driver.switch_to_window(self.driver.current_window_handle)
-        if isinstance(locator_or_element, WebElement):
+        if isinstance(locator_or_element, (WebElement, EventFiringWebElement)):
             self.wait_for_element_clickable(locator_or_element)
             locator_or_element.click()
         else:

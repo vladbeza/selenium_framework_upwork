@@ -1,8 +1,9 @@
+import allure
+
 from selenium.webdriver.common.by import By
 
 from Pages.BasePage import BasePage
 from Toolboxes.MainToolbox import MainToolbox
-from Elements.BaseElement import BaseElement
 
 
 class MainPageLocators(object):
@@ -46,14 +47,17 @@ class StepModalWindow(BasePage):
 
     URL = "/"
 
+    @allure.step("Press next button")
     def press_next_button_in_first_window(self):
         self.click(StepModalWindowLocators.next_button_main)
         return self
 
+    @allure.step("Press next button")
     def press_next_button(self):
         self.click(StepModalWindowLocators.next_button)
         return self
 
+    @allure.step("Select checkbox {0}")
     def select_checkbox_item(self, text):
         self.click(StepModalWindowLocators.checkbox_by_text(text))
         return self
@@ -76,15 +80,18 @@ class MainPage(BasePage):
     def get_back_span_by_category_item(self, item_locator):
         self.get_element(item_locator).find_element(By.XPATH, '/span[@class="__back"]')
 
+    @allure.step("Press category {1}")
     def press_category_item(self, item):
         element = self.scroll_to_element(item)
         self.click(element)
         return self
 
+    @allure.step("Enter '{1}' to get started entry")
     def enter_text_to_get_started_entry(self, text):
         self.type_text(MainPageLocators.work_type_input, text)
         return self
 
+    @allure.step("Press get started button")
     def press_get_started_button(self):
         self.click(MainPageLocators.get_started_button)
         self.wait_for_visible(StepModalWindowLocators.main_window)

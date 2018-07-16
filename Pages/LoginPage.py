@@ -1,8 +1,9 @@
+import allure
+
 from selenium.webdriver.common.by import By
 
 from Pages.BasePage import BasePage
 from Utils import wait_for_page_load
-
 
 class LoginPageLocators(object):
 
@@ -21,6 +22,7 @@ class LoginPage(BasePage):
 
     URL = "/ab/account-security/login"
 
+    @allure.step("Fill login fields with email {1}, password {2}")
     def login(self, email, password):
         self.type_text(LoginPageLocators.login_name_input, email)
         self.click(LoginPageLocators.continue_button)

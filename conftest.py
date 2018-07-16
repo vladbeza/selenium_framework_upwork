@@ -1,13 +1,16 @@
 import pytest
 import os
 import logging
+import allure
 from datetime import datetime
 
 from selenium import webdriver
 from selenium.common.exceptions import WebDriverException
 from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
+from selenium.webdriver.support.events import EventFiringWebDriver
 
 from TestData.Configuration import Config
+from EventListener import BaseListener
 
 BROWSERS = {
     'FIREFOX': webdriver.Firefox,
@@ -19,7 +22,9 @@ BROWSERS = {
     'REMOTE': webdriver.Remote
 }
 
-logging.basicConfig(format='%(asctime)s %(message)s', level=logging.INFO)
+# pytest_plugins = 'allure.pytest_plugin'
+
+logging.basicConfig(format='%(asctime)s %(filename)s %(funcName)s %(message)s', level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 
@@ -118,7 +123,8 @@ def driver(request):
     driver = None
     try:
         browser_name = request.param.upper()
-        driver = get_driver_for_browser(request, browser_name)
+        browser = get_driver_for_browser(request, browser_name)
+        driver = EventFiringWebDriver(browser, BaseListener())
         logger.info(driver.capabilities)
         driver.implicitly_wait(Config.IMPLICIT_WAIT_TIMEOUT)
         driver.set_page_load_timeout(60)
