@@ -156,6 +156,7 @@ def create_screenshot_on_failure(request):
                 os.makedirs(screens_folder)
             screen_path = os.path.join(screens_folder, "{}{}.png".format(test_name, current_date))
             request.instance.driver.save_screenshot(screen_path)
+            allure.attach.file(screen_path, attachment_type=allure.attachment_type.PNG)
         except Exception as ex:
             logger.warning("Couldn't take screenshot. {}".format(ex))
 

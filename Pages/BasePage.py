@@ -53,7 +53,7 @@ class BasePage(object):
     def is_radio_checked(self, locator):
         return self.get_element(locator).get_attribute("checked") == "true"
 
-    @allure.step("Scroll page in {1} pixels vertically, {2} pixels horizontally")
+    @allure.step("Scroll page in {1} pixels vertically, {horizontal_px} pixels horizontally")
     def scroll_page(self, vertical_px, horizontal_px=0):
         self.driver.execute_script("window.scrollBy({}, {});".format(horizontal_px, vertical_px))
 
