@@ -11,6 +11,7 @@ from selenium.webdriver.support.events import EventFiringWebDriver
 
 from TestData.Configuration import Config
 from EventListener import BaseListener
+from Utils import take_screenshot_with_name
 
 BROWSERS = {
     'FIREFOX': webdriver.Firefox,
@@ -140,41 +141,31 @@ def driver(request):
         if driver is not None:
             driver.quit()
 
+# Fixtures for creating screenshot on test failure (there are problems with fixtures run order, if last test in suite
+#  is failed, driver closes faster then screenshot taken), and failing test if previous test in suite is failed
 
-@pytest.fixture(scope="function", autouse=True)
-def create_screenshot_on_failure(request):
-    yield
-    test_name = request.node.name
-    if request.node.rep_call.failed:
-        try:
-            current_date = str(datetime.now()).split(".")[0]
-            for symbol in [" ", "[", "]", ".", ":"]:
-                current_date = current_date.replace(symbol, "_")
-                test_name = test_name.replace(symbol, "_")
-            screens_folder = os.path.join(os.getcwd(), "Screenshots")
-            if not os.path.exists(screens_folder):
-                os.makedirs(screens_folder)
-            screen_path = os.path.join(screens_folder, "{}{}.png".format(test_name, current_date))
-            request.instance.driver.save_screenshot(screen_path)
-            allure.attach.file(screen_path, attachment_type=allure.attachment_type.PNG)
-        except Exception as ex:
-            logger.warning("Couldn't take screenshot. {}".format(ex))
+# def pytest_runtest_setup(item):
+#     previousfailed = getattr(item.parent, "_previousfailed", None)
+#     if previousfailed is not None:
+#         pytest.xfail("previous test failed (%s)" %previousfailed.name)
+#
+#
+# @pytest.fixture(scope="function", autouse=True)
+# def create_screenshot_on_failure(request):
+#     yield
+#     test_name = request.node.name
+#     if request.node.rep_call.failed:
+#         take_screenshot_with_name(test_name, request.instance.driver)
 
 
-def pytest_runtest_setup(item):
-    previousfailed = getattr(item.parent, "_previousfailed", None)
-    if previousfailed is not None:
-        pytest.xfail("previous test failed (%s)" %previousfailed.name)
-
-
-@pytest.hookimpl(hookwrapper=True, tryfirst=True)
-def pytest_runtest_makereport(item, call):
-    if "login" in item.keywords:
-        if call.excinfo is not None:
-            parent = item.parent
-            parent._previousfailed = item
-    outcome = yield
-    rep = outcome.get_result()
-    setattr(item, "rep_" + rep.when, rep)
-    return rep
+# @pytest.hookimpl(hookwrapper=True, tryfirst=True)
+# def pytest_runtest_makereport(item, call):
+#     if "login" in item.keywords:
+#         if call.excinfo is not None:
+#             parent = item.parent
+#             parent._previousfailed = item
+#     outcome = yield
+#     rep = outcome.get_result()
+#     setattr(item, "rep_" + rep.when, rep)
+#     return rep
 

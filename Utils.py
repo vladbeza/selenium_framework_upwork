@@ -1,4 +1,47 @@
+import os
+import allure
+import logging
+
+from datetime import datetime
+
 from TestData.Configuration import Config
+
+
+def take_screenshot_with_name(name, driver):
+    try:
+        current_date = str(datetime.now()).split(".")[0]
+        for symbol in [" ", "[", "]", ".", ":"]:
+            current_date = current_date.replace(symbol, "_")
+            name = name.replace(symbol, "_")
+        screens_folder = os.path.join(os.getcwd(), "Screenshots")
+        if not os.path.exists(screens_folder):
+            os.makedirs(screens_folder)
+        screen_path = os.path.join(screens_folder, "{}{}.png".format(name, current_date))
+        driver.save_screenshot(screen_path)
+        allure.attach.file(screen_path, attachment_type=allure.attachment_type.PNG)
+    except Exception as ex:
+        logging.warning("Couldn't take screenshot. {}".format(ex))
+
+
+def take_screenshot_on_assertion(test_method):
+
+    def decorator(self, *args, **kwars):
+        try:
+            test_method(self, *args, **kwars)
+        except AssertionError as assertion:
+            take_screenshot_with_name(test_method.__name__, self.driver)
+            raise assertion
+
+    return decorator
+
+
+class CatchAssertions(type):
+
+    def __new__(cls, clsname, superclasses, attributesdict):
+        for attr_name, attr in attributesdict.items():
+            if callable(attr):
+                setattr(cls, attr_name, take_screenshot_on_assertion(attr))
+        return type.__new__(cls, clsname, superclasses, attributesdict)
 
 
 class wait_for_page_load(object):
