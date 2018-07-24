@@ -1,6 +1,7 @@
 import os
 import allure
 import logging
+import functools
 
 from datetime import datetime
 
@@ -13,7 +14,7 @@ def take_screenshot_with_name(name, driver):
         for symbol in [" ", "[", "]", ".", ":"]:
             current_date = current_date.replace(symbol, "_")
             name = name.replace(symbol, "_")
-        screens_folder = os.path.join(os.getcwd(), "Screenshots")
+        screens_folder = os.path.join(os.path.dirname(os.getcwd()), "Screenshots")
         if not os.path.exists(screens_folder):
             os.makedirs(screens_folder)
         screen_path = os.path.join(screens_folder, "{}{}.png".format(name, current_date))
@@ -25,22 +26,23 @@ def take_screenshot_with_name(name, driver):
 
 def take_screenshot_on_assertion(test_method):
 
-    def decorator(self, *args, **kwars):
+    @functools.wraps(test_method)
+    def test_decorator(self, *args, **kwars):
         try:
             test_method(self, *args, **kwars)
         except AssertionError as assertion:
             take_screenshot_with_name(test_method.__name__, self.driver)
             raise assertion
 
-    return decorator
+    return test_decorator
 
 
 class CatchAssertions(type):
 
     def __new__(cls, clsname, superclasses, attributesdict):
         for attr_name, attr in attributesdict.items():
-            if callable(attr):
-                setattr(cls, attr_name, take_screenshot_on_assertion(attr))
+            if callable(attr) and attr_name.startswith("test"):
+                attributesdict[attr_name] = take_screenshot_on_assertion(attr)
         return type.__new__(cls, clsname, superclasses, attributesdict)
 
 
