@@ -13,11 +13,10 @@ class AuthorizedToolbox(Toolbox):
 
     account_name = (By.CSS_SELECTOR, "div#layout div.media-body span[class*=account-name]")
     profile_settigns_button = (By.CSS_SELECTOR, "div#layout a[href=/UserSettings/profile]")
-    logout_button = (By.CSS_SELECTOR, "div#layout form#nav-logout")
+    logout_button = (By.XPATH, ".//div[@id='layout']//a[form[@id='nav-logout']]")
 
     def logout(self):
         self.wait_for_visible(self.account_name)
         self.click(self.account_name)
-        self.wait_for_clickable(self.logout_button, timeout=10)
         with wait_for_page_load(self.driver):
             self.click(self.logout_button)
