@@ -5,7 +5,8 @@ from Pages.BasePage import BasePage
 
 class SearchPageLocators(object):
 
-    jobs_list = (By.ID, "jobs-list")
+    jobs_list = (By.CSS_SELECTOR, "div[class*=js-search-results]")
+    job_item = (By.CSS_SELECTOR, "section[class*=job-tile-responsive]")
 
 
 class SearchPage(BasePage):
@@ -14,4 +15,4 @@ class SearchPage(BasePage):
 
     def get_count_of_found_items_on_page(self):
         return len(self.get_elements_with_not_stale_waiting(lambda driver: driver.find_element
-                (*SearchPageLocators.jobs_list).find_elements(By.CSS_SELECTOR, "section.job-tile"), timeout=20))
+                (*SearchPageLocators.jobs_list).find_elements(*SearchPageLocators.job_item), timeout=20))

@@ -1,4 +1,5 @@
 import allure
+import logging
 
 from TestData.Configuration import Config
 from selenium.common.exceptions import NoSuchElementException, StaleElementReferenceException
@@ -119,7 +120,8 @@ class BasePage(object):
         def excpectation(driver):
             try:
                 return action_method(driver)
-            except StaleElementReferenceException:
+            except StaleElementReferenceException as ex:
+                logging.warning(ex)
                 return False
 
         try:

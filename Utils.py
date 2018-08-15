@@ -31,6 +31,7 @@ def take_screenshot_on_assertion(test_method):
         try:
             test_method(self, *args, **kwars)
         except AssertionError as assertion:
+            print("Take screenshot")
             take_screenshot_with_name(test_method.__name__, self.driver)
             raise assertion
 
