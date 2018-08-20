@@ -1,13 +1,8 @@
 import pytest
 
-from Tests.BaseTestSuite import BaseTestSuite
 from TestData.Configuration import Config
-from Pages.MainPage import MainPage
-from Pages.FindWorkPageAuthorized import FindWorkPageAuthorized
-from Pages.LoginPage import LoginPage
-
-from Utils import wait_for_page_load
-
+from Tests.BaseTestSuite import BaseTestSuite
+from PagesFactory import PagesFactory
 
 pytestmark = [pytest.mark.skipif((Config.LOGIN is None or Config.PASSWORD is None), reason='LOGIN and Password required'),
                 pytest.mark.login]
@@ -16,17 +11,13 @@ pytestmark = [pytest.mark.skipif((Config.LOGIN is None or Config.PASSWORD is Non
 class TestLoginSuite(BaseTestSuite):
 
     def login(self, email, password):
-        main_page = MainPage(self.driver)
-        main_page.open_page()
-        with wait_for_page_load(self.driver):
-            main_page.toolbox.press_login_button()
-        login_page = LoginPage(self.driver)
+        login_page = PagesFactory(self.driver).main.open_page().toolbox.press_login_button()
         login_page.login(email, password)
 
     def test_login_logout(self):
         self.login(Config.LOGIN, Config.PASSWORD)
-        assert FindWorkPageAuthorized(self.driver).is_url_opened()
-        FindWorkPageAuthorized(self.driver).toolbox.logout()
-        assert LoginPage(self.driver).is_url_opened()
-
+        authorized = PagesFactory(self.driver).find_work_authorized
+        assert authorized.is_url_opened()
+        login_page = authorized.toolbox.logout()
+        assert login_page.is_url_opened()
 

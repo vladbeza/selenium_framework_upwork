@@ -1,7 +1,7 @@
-from Toolboxes.AbstractToolbox import Toolbox
 from selenium.webdriver.common.by import By
 
-from Utils import wait_for_page_load
+from Elements.AbstractToolbox import Toolbox
+
 
 class AuthorizedToolbox(Toolbox):
 
@@ -16,7 +16,7 @@ class AuthorizedToolbox(Toolbox):
     logout_button = (By.XPATH, ".//div[@id='layout']//a[form[@id='nav-logout']]")
 
     def logout(self):
-        self.wait_for_visible(self.account_name)
         self.click(self.account_name)
-        with wait_for_page_load(self.driver):
+        with self.wait_for_page_loaded():
             self.click(self.logout_button)
+        return self.pages.login

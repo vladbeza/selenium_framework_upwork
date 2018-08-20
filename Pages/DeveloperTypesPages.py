@@ -1,6 +1,7 @@
 from selenium.webdriver.common.by import By
+
+from Elements.MainToolbox import MainToolbox
 from Pages.BasePage import BasePage
-from Toolboxes.MainToolbox import MainToolbox
 
 
 class DeveloperTypesPagesLocators(object):

@@ -1,17 +1,13 @@
-import pytest
-import os
 import logging
-import allure
-from datetime import datetime
 
+import pytest
 from selenium import webdriver
 from selenium.common.exceptions import WebDriverException
 from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
 from selenium.webdriver.support.events import EventFiringWebDriver
 
-from TestData.Configuration import Config
 from EventListener import BaseListener
-from Utils import take_screenshot_with_name
+from TestData.Configuration import Config
 
 BROWSERS = {
     'FIREFOX': webdriver.Firefox,

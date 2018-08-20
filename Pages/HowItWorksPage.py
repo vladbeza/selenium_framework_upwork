@@ -1,11 +1,10 @@
-import allure
-
-from selenium.webdriver.common.by import By
-
 from enum import Enum
 
+import allure
+from selenium.webdriver.common.by import By
+
+from Elements.MainToolbox import MainToolbox
 from Pages.BasePage import BasePage
-from Toolboxes.MainToolbox import MainToolbox
 
 
 class FaqType(Enum):

@@ -2,6 +2,8 @@ import allure
 import logging
 
 from TestData.Configuration import Config
+from Utils import wait_for_page_load_context_manager
+
 from selenium.common.exceptions import NoSuchElementException, StaleElementReferenceException
 from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.support.ui import WebDriverWait
@@ -15,7 +17,15 @@ class BasePage(object):
     URL = None
 
     def __init__(self, driver):
+        from PagesFactory import PagesFactory
         self.driver = driver
+        self.pages = PagesFactory(driver)
+
+    def __repr__(self):
+        return self.__class__.__name__
+
+    def wait_for_page_loaded(self, timeout=Config.WAITER_TIMEOUT):
+        return wait_for_page_load_context_manager(self.driver, timeout)
 
     def get_url(self):
         assert self.URL is not None, "URL should be assigned for Page object"
@@ -25,8 +35,9 @@ class BasePage(object):
             return self.URL
 
     def open_page(self):
-        with allure.step("Open page {}".format(self.__class__.__name__)):
+        with allure.step("Open page {}".format(str(self))):
             self.driver.get(self.get_url())
+        return self
 
     def is_url_opened(self, time_to_wait=Config.WAITER_TIMEOUT):
         return self._waiting_wrapper(lambda driver: driver.current_url == self.get_url(), None, time_to_wait)
@@ -57,12 +68,13 @@ class BasePage(object):
     @allure.step("Scroll page in {1} pixels vertically, {horizontal_px} pixels horizontally")
     def scroll_page(self, vertical_px, horizontal_px=0):
         self.driver.execute_script("window.scrollBy({}, {});".format(horizontal_px, vertical_px))
+        return self
 
     @allure.step("Scroll page to element {1}")
     def scroll_to_element(self, locator):
         element = self.driver.find_element(*locator)
         self.driver.execute_script("arguments[0].scrollIntoView();", element)
-        return element
+        return self
 
     def click(self, locator_or_element):
         self.driver.switch_to_window(self.driver.current_window_handle)
@@ -101,8 +113,8 @@ class BasePage(object):
     def wait_for_not_exist(self, element, timeout=Config.WAITER_TIMEOUT):
         return self._waiting_wrapper(EC.staleness_of, element, timeout)
 
-    def wait_for_visible(self, locator, timeout=Config.WAITER_TIMEOUT):
-        return self._waiting_wrapper(EC.visibility_of_element_located, locator, timeout)
+    def wait_for_visible(self, locator, timeout=Config.WAITER_TIMEOUT, raise_on_fail=True):
+        return self._waiting_wrapper(EC.visibility_of_element_located, locator, timeout, raise_on_fail)
 
     def wait_for_not_visible(self, locator, timeout=Config.WAITER_TIMEOUT):
         return self._waiting_wrapper(EC.invisibility_of_element_located, locator, timeout)
