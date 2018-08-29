@@ -13,7 +13,7 @@ from selenium.webdriver.support.event_firing_webdriver import EventFiringWebElem
 
 
 class BasePage(object):
-    # new master change
+
     URL = None
 
     def __init__(self, driver):
