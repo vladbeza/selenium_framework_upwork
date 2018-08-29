@@ -1,7 +1,5 @@
-from selenium.webdriver.common.by import By
-
+from Elements.AuthorizedToolbox import AuthorizedToolbox
 from Pages.BasePage import BasePage
-from Toolboxes.AuthorizedToolbox import AuthorizedToolbox
 
 
 class FindWorkPageLocators(object):

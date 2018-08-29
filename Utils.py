@@ -32,7 +32,7 @@ def take_screenshot_on_assertion(test_method):
             test_method(self, *args, **kwars)
         except AssertionError as assertion:
             print("Take screenshot")
-            take_screenshot_with_name(test_method.__name__, self.driver)
+            take_screenshot_with_name(test_method.__name__, self.app.driver)
             raise assertion
 
     return test_decorator
@@ -47,7 +47,7 @@ class CatchAssertions(type):
         return type.__new__(cls, clsname, superclasses, attributesdict)
 
 
-class wait_for_page_load(object):
+class wait_for_page_load_context_manager(object):
 
     def __init__(self, browser, timeout=Config.WAITER_TIMEOUT):
         self.browser = browser
