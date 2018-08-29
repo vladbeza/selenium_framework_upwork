@@ -1,10 +1,9 @@
 import allure
+
 from selenium.webdriver.common.by import By
 
-from Utils import wait_for_page_load_context_manager
-from Elements.MainToolbox import MainToolbox
 from Pages.BasePage import BasePage
-from Pages.AllFreelancersCategoriesPage import AllFreelancersCategoriesPage
+from Toolboxes.MainToolbox import MainToolbox
 
 
 class MainPageLocators(object):
@@ -22,10 +21,7 @@ class MainPageLocators(object):
     accountants_item = (By.XPATH, '//a[@class="__item" and @href="/cat/accounting-consulting/"]')
     all_categories_button = (By.CSS_SELECTOR, 'section[class*="__tiles-section"] a[class*="btn-default"][href="/i/freelancer-categories-all/"]')
 
-
-class StepModalWindow(BasePage):
-
-    URL = "/"
+class StepModalWindowLocators(object):
 
     main_window = (By.CSS_SELECTOR, 'div.modal-dialog div.steps')
     close_button = (By.XPATH, '//div[@class="step-header"]/a[@class="icon-close"]')
@@ -46,23 +42,28 @@ class StepModalWindow(BasePage):
     def job_category_checkbox_by_text(cls, text):
         return By.XPATH, cls.checkbox_by_text(text)[1] + '//input[@name="category_radio"]'
 
+
+class StepModalWindow(BasePage):
+
+    URL = "/"
+
     @allure.step("Press next button")
     def press_next_button_in_first_window(self):
-        self.click(self.next_button_main)
+        self.click(StepModalWindowLocators.next_button_main)
         return self
 
     @allure.step("Press next button")
     def press_next_button(self):
-        self.click(self.next_button)
+        self.click(StepModalWindowLocators.next_button)
         return self
 
     @allure.step("Select checkbox {0}")
     def select_checkbox_item(self, text):
-        self.click(self.checkbox_by_text(text))
+        self.click(StepModalWindowLocators.checkbox_by_text(text))
         return self
 
     def is_category_radio_box_checked(self, checkbox_text):
-        return self.is_radio_checked(self.job_category_checkbox_by_text(checkbox_text))
+        return self.is_radio_checked(StepModalWindowLocators.job_category_checkbox_by_text(checkbox_text))
 
 
 class MainPage(BasePage):
@@ -72,7 +73,6 @@ class MainPage(BasePage):
     def __init__(self, driver):
         super(MainPage, self).__init__(driver)
         self.toolbox = MainToolbox(driver)
-        self.step_modal_window = StepModalWindow(self.driver)
 
     def get_elements_in_matches_drop_down(self):
         return self.get_element(MainPageLocators.matches_dropdown_menu).find_elements(By.CSS_SELECTOR, 'li[id*=typeahead] > a')
@@ -94,11 +94,5 @@ class MainPage(BasePage):
     @allure.step("Press get started button")
     def press_get_started_button(self):
         self.click(MainPageLocators.get_started_button)
-        self.wait_for_visible(self.step_modal_window.main_window)
-        return self.step_modal_window
-
-    @allure.step("Press all categories button")
-    def press_all_categories_button(self):
-        with self.wait_for_page_loaded():
-            self.click(MainPageLocators.all_categories_button)
-        return self.pages.all_freelance_categories
+        self.wait_for_visible(StepModalWindowLocators.main_window)
+        return self

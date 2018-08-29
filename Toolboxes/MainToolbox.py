@@ -1,9 +1,8 @@
 import allure
+
 from selenium.webdriver.common.by import By
 
-
-from Utils import wait_for_page_load_context_manager
-from Elements.AbstractToolbox import Toolbox
+from Toolboxes.AbstractToolbox import Toolbox
 
 
 class AuthorizedToolbox(Toolbox):
@@ -40,23 +39,17 @@ class MainToolbox(Toolbox):
 
     @allure.step("Press LOGIN button")
     def press_login_button(self):
-        with wait_for_page_load_context_manager(self.driver):
-            self.click(self.login_button)
-        return self.pages.login
+        self.click(self.login_button)
 
     @allure.step("Press SIGN UP button")
     def press_signup_button(self):
-        with wait_for_page_load_context_manager(self.driver):
-            self.click(self.sign_up)
-        return self.pages.sign_up
+        self.click(self.sign_up)
 
     @allure.step("Press HOW IT WORKS button")
     def press_how_it_works_button(self):
-        with wait_for_page_load_context_manager(self.driver):
-            self.click(self.how_it_works)
+        self.click(self.how_it_works)
 
     @allure.step("Press category {1}")
     def press_category_item(self, locator):
         element = self.get_elements_with_waiting(locator)[1]
-        with wait_for_page_load_context_manager(self.driver):
-            self.click(element)
+        self.click(element)

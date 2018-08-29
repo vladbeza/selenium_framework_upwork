@@ -3,8 +3,7 @@ import allure
 from selenium.webdriver.common.by import By
 
 from Pages.BasePage import BasePage
-from Pages.FindWorkPageAuthorized import FindWorkPageAuthorized
-
+from Utils import wait_for_page_load
 
 class LoginPageLocators(object):
 
@@ -30,9 +29,9 @@ class LoginPage(BasePage):
 
         self.wait_for_visible(LoginPageLocators.login_password_input)
         self.type_text(LoginPageLocators.login_password_input, password)
-        with self.wait_for_page_loaded():
+        with wait_for_page_load(self.driver):
             self.click(LoginPageLocators.login_button)
-        return self.pages.find_work_authorized
+        return self
 
     def get_login_name_value(self):
         return self.get_element(LoginPageLocators.login_name_input).value

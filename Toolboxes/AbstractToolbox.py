@@ -1,8 +1,6 @@
 from selenium.webdriver.common.keys import Keys
 
 from Pages.BasePage import BasePage
-from Pages.SearchPage import SearchPage
-from Utils import wait_for_page_load_context_manager
 
 
 class Toolbox(BasePage):
@@ -34,7 +32,5 @@ class Toolbox(BasePage):
     def create_search(self, text_for_search, should_submit=True):
         search = self.type_text(self.search_input, text_for_search)
         if should_submit:
-            with wait_for_page_load_context_manager(self.driver):
-                search.send_keys(Keys.RETURN)
-                return SearchPage(self.driver)
+            search.send_keys(Keys.RETURN)
         return self

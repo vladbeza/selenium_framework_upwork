@@ -2,7 +2,8 @@ import allure
 
 from pytest_bdd import scenarios, given, when, then, parsers, scenario
 
-from PagesFactory import PagesFactory
+from Pages.HowItWorksPage import HowItWorksFreelancerPage, HowItWorksClientPage
+from Pages.MainPage import MainPage
 
 
 @scenario('Features/open_freelance_faq_get_pain.feature', 'Navigating to freelancer about page')
@@ -19,12 +20,16 @@ def test_navigate_to_client_faq(driver):
 
 @given("I'm on how it works page")
 def open_how_it_works_page(driver):
-    return PagesFactory(driver).about_freelancers.open_page()
+    freelancer_about_page = HowItWorksFreelancerPage(driver)
+    freelancer_about_page.open_page()
+    return freelancer_about_page
 
 
 @given("I'm on main page")
 def open_main_page(driver):
-    return PagesFactory(driver).main.open_page()
+    main_page = MainPage(driver)
+    main_page.open_page()
+    return main_page
 
 
 @when("I press the get paid button")
@@ -46,4 +51,4 @@ def press_how_it_works_page(open_main_page):
 
 @then("Client faq page is opened")
 def verify_client_faq_page_opened(driver):
-    assert PagesFactory(driver).about_clients.is_url_opened()
+    assert HowItWorksClientPage(driver).is_url_opened()
